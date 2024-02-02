@@ -7,17 +7,27 @@ workspace "Vanim"
     objdir("%{wks.location}/bin-int/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}/%{prj.name}")
 
     filter "configurations:Debug"
-        defines { "DEBUG" }
+        defines { "VANIM_DEBUG" }
+        runtime "Debug"
+        optimize "Off"
         symbols "On"
 
     filter "configurations:Release"
-        defines { "NDEBUG" }
+        defines { "VANIM_RELEASE" }
+        runtime "Release"
         optimize "On"
+        symbols "Off"
 
     filter {}
 
+group "Dependencies"
+    include "vendor/glfw"
+    include "vendor/glad"
+    include "vendor/imgui"
+group ""
+
 group "Core"
-include "VanimCore"
+    include "VanimCore"
 group ""
 
 include "VanimEditor"
