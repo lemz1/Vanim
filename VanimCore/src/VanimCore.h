@@ -1,4 +1,5 @@
 #pragma once
 
-#include "VanimCore/Application/Application.h"
-#include "VanimCore/Window/Window.h"
+#include "VanimCore/Application.h"
+#include "VanimCore/Window.h"
+#include "VanimCore/Components.h"

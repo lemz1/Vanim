@@ -2,6 +2,8 @@
 
 #include "VanimCore.h"
 
+using namespace Vanim;
+
 int main()
 {
 	WindowSpecification windowSpec;
@@ -13,9 +15,9 @@ int main()
 	ApplicationSpecification spec;
 	spec.windowSpec = windowSpec;
 
-	createApplication(&spec);
-	runApplication();
-	endApplication();
+	Application* app = new Application(spec);
+	app->Run();
+	delete app;
 
 	return 0;
 }
