@@ -15,5 +15,6 @@ project "VanimCore"
 
     links 
     {
-        "GLFW"
+        "GLFW",
+        "Glad"
     }

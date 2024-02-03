@@ -4,9 +4,18 @@
 
 int main()
 {
-	printApp();
+	WindowSpecification windowSpec;
+	windowSpec.title	= "Vanim";
+	windowSpec.width	= 1280;
+	windowSpec.height	= 720;
+	windowSpec.vSync	= true;
 
-	printf("hello world\n");
+	ApplicationSpecification spec;
+	spec.windowSpec = windowSpec;
+
+	createApplication(&spec);
+	runApplication();
+	endApplication();
 
 	return 0;
 }

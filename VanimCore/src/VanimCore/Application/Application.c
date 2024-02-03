@@ -1,6 +1,23 @@
 #include "VanimCore/Application/Application.h"
 
-void printApp()
+void createApplication(ApplicationSpecification* spec)
 {
-	printf("hello application\n");
+	g_Window = createWindow(&spec->windowSpec);
+}
+
+void runApplication()
+{
+	g_IsRunning = true;
+
+	while (!glfwWindowShouldClose(g_Window._windowHandle))
+	{
+		glfwPollEvents();
+	}
+
+	g_IsRunning = false;
+}
+
+void endApplication()
+{
+	glfwTerminate();
 }
