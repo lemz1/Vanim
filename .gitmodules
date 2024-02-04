@@ -7,3 +7,7 @@
 [submodule "vendor/entt/entt"]
 	path = vendor/entt/entt
 	url = https://github.com/skypjack/entt.git
+[submodule "vendor/imgui/imgui"]
+	path = vendor/imgui/imgui
+	url = https://github.com/ocornut/imgui.git
+	branch = docking
