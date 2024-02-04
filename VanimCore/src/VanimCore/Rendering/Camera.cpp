@@ -1,38 +1,24 @@
 #include "vanimpch.h"
 #include "Camera.h"
 
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 namespace Vanim
 {
-	Camera::Camera(
-		const Transform& transform, 
-		const CameraSpecification& spec
-	)
-		: _transform(transform),
-		_width(spec.width),
+	Camera::Camera(const CameraSpecification& spec)
+	:	_width(spec.width),
 		_height(spec.height),
 		_verticalFOV(spec.verticalFOV),
 		_nearClipPlane(spec.nearClipPlane),
 		_farClipPlane(spec.farClipPlane),
-		_movementSpeed(spec.movementSpeed),
-		_rotationSpeed(spec.rotationSpeed),
 		_orthographicSize(spec.orthographicSize),
 		_isOrthographic(spec.isOrthographic)
 	{
 		RecalculateProjection();
-		RecalculateView();
 	}
 
 	void Camera::RecalculateProjection()
-	{
-		glm::mat4 translation = glm::translate(glm::mat4(1.f), _transform.GetPosition());
-		glm::mat4 rotation = glm::mat4_cast(_transform.GetRotation());
-
-		_view = translation * rotation;
-
-		_viewProjection = _view * _projection;
-	}
-
-	void Camera::RecalculateView()
 	{
 		if (_isOrthographic)
 		{
@@ -60,7 +46,5 @@ namespace Vanim
 				_farClipPlane
 			);
 		}
-
-		_viewProjection = _view * _projection;
 	}
 }

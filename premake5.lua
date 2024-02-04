@@ -6,6 +6,8 @@ workspace "Vanim"
     targetdir("%{wks.location}/bin/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}/%{prj.name}")
     objdir("%{wks.location}/bin-int/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}/%{prj.name}")
 
+    defines { "GLM_ENABLE_EXPERIMENTAL" }
+
     filter "configurations:Debug"
         defines { "VANIM_DEBUG" }
         runtime "Debug"

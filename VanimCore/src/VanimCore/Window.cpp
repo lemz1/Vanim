@@ -30,10 +30,8 @@ static void APIENTRY openglDebugCallback(
 
 namespace Vanim
 {
-	Window::Window(
-		const WindowSpecification& spec
-	)
-		: _title(spec.title),
+	Window::Window(const WindowSpecification& spec)
+	:	_title(spec.title),
 		_width(spec.width),
 		_height(spec.height),
 		_vSync(spec.vSync)
