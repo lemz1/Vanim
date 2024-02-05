@@ -48,8 +48,13 @@ namespace Vanim
 		}
 
 		const entt::entity GetEntity() const { return _handle; }
+
+		bool operator==(const Entity& other) const { return _handle == other._handle && _registry == other._registry; }
+		bool operator!=(const Entity& other) const { return !operator==(other); }
+		operator bool() const { return _handle != entt::null; }
+		operator uint32_t() const { return (uint32_t)_handle; }
 	private:
-		entt::registry* _registry;
-		entt::entity _handle;
+		entt::registry* _registry = nullptr;
+		entt::entity _handle{ entt::null };
 	};
 }

@@ -1,26 +1,16 @@
 #pragma once
 
-#include "VanimCore/Entity.h"
-
 #include <vector>
+
+#include "Entity.h"
+#include "Components.h"
 
 namespace Vanim
 {
-	class State
+	class Scene
 	{
 	public:
-		State() = default;
-		~State() = default;
-		
-		virtual void Create() {}
-
-		virtual void Update(const double deltaTime);
-
-		virtual void Draw() {}
-
-		// virtual void Event() {}
-
-		virtual void Destroy();
+		Scene() = default;
 
 		Entity CreateEntity(const char* tag = "Entity");
 
@@ -31,7 +21,7 @@ namespace Vanim
 		{
 			auto view = _registry.view<Component>();
 			std::vector<Entity> entities;
-			entities.reserve(view.size());
+			entities.reserve(view.size_hint());
 			for (auto entity : view)
 			{
 				entities.emplace_back(entity, &_registry);
@@ -39,7 +29,6 @@ namespace Vanim
 			return entities;
 		}
 
-		
 		template<typename... Components>
 		std::vector<Entity> GetEntitiesOfTypes()
 		{
@@ -52,7 +41,9 @@ namespace Vanim
 			}
 			return entities;
 		}
-	protected:
+	private:
 		entt::registry _registry;
+
+		friend class SceneHierarchyPanel;
 	};
 }

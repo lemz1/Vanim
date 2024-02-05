@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "ScriptableEntity.h"
-#include "Rendering/Camera.h"
+#include "VanimEditor/Rendering/Camera.h"
 
 namespace Vanim
 {

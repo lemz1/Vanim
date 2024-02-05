@@ -3,8 +3,8 @@ project "VanimCore"
     language "C++"
     cppdialect "C++17"
 
-    pchheader "vanimpch.h"
-    pchsource "src/vanimpch.cpp"
+    pchheader "corepch.h"
+    pchsource "src/corepch.cpp"
 
     files { "**.h", "**.c", "**.hpp", "**.cpp" }
 
@@ -22,5 +22,6 @@ project "VanimCore"
     {
         "GLFW",
         "Glad",
+        "ImGui",
         "opengl32.lib"
     }

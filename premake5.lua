@@ -20,6 +20,12 @@ workspace "Vanim"
         optimize "On"
         symbols "Off"
 
+    filter "system:windows"
+		defines { "VANIM_WINDOWS" }
+
+	filter "system:linux"
+		defines { "VANIM_LINUX" }
+
     filter {}
 
 group "Dependencies"

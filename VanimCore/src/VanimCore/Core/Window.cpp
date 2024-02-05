@@ -1,15 +1,17 @@
-#include "vanimpch.h"
-#include "VanimCore/Window.h"
+#include "corepch.h"
+#include "Window.h"
 
-#include <stdio.h>
-#include <assert.h>
+#include <iostream>
+#include <cassert>
+
+#include "VanimCore/Base.h"
 
 static void glfwErrorCallback(
 	int			error_code, 
 	const char* description
 )
 {
-	fprintf(stderr, "GLFW ERROR %d: %s\n", error_code, description);
+	VANIM_ERROR("GLFW ERROR " << error_code << ": " << description);
 }
 
 static void APIENTRY openglDebugCallback(
@@ -22,10 +24,18 @@ static void APIENTRY openglDebugCallback(
 	const void*		userParam
 )
 {
-	fprintf(stderr, "OpenGL Debug Message: %s\n", message);
-	#if VANIM_DEBUG
-	assert(false);
-	#endif
+	switch (severity)
+	{
+		case GL_DEBUG_SEVERITY_MEDIUM:
+		case GL_DEBUG_SEVERITY_HIGH:
+			VANIM_ERROR("OpenGL Debug Message: " << message);
+			#ifdef VANIM_DEBUG
+			assert(severity != GL_DEBUG_SEVERITY_HIGH);
+			#endif
+			break;
+		default:
+			return;
+	}
 }
 
 namespace Vanim
@@ -38,7 +48,7 @@ namespace Vanim
 	{
 		if (!glfwInit())
 		{
-			fprintf(stderr, "Could not init glfw!\n");
+			VANIM_ERROR("Could not init glfw!");
 			return;
 		}
 
@@ -51,7 +61,7 @@ namespace Vanim
 		_handle = glfwCreateWindow(_width, _height, _title, nullptr, nullptr);
 		if (!_handle)
 		{
-			fprintf(stderr, "Could not create glfw window!\n");
+			VANIM_ERROR("Could not create glfw window!");
 			glfwTerminate();
 			return;
 		}
@@ -61,11 +71,12 @@ namespace Vanim
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			fprintf(stderr, "Could not initialize glad!\n");
+			VANIM_ERROR("Could not initialize glad!");
 			glfwTerminate();
 			return;
 		}
 
+		glViewport(0, 0, _width, _height);
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(openglDebugCallback, nullptr);

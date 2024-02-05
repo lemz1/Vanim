@@ -33,7 +33,7 @@ namespace Vanim
 		void SetVSync(const bool vSync) { _vSync = vSync; glfwSwapInterval(vSync); }
 		const bool GetVSync() const { return _vSync; }
 	private:
-		GLFWwindow* _handle;
+		GLFWwindow* _handle = nullptr;
 		const char*	_title;
 		uint32_t	_width;
 		uint32_t	_height;

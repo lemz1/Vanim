@@ -3,6 +3,9 @@ project "VanimEditor"
     language "C++"
     cppdialect "C++17"
 
+    pchheader "editorpch.h"
+    pchsource "src/editorpch.cpp"
+
     files { "**.h", "**.c", "**.hpp", "**.cpp" }
 
     includedirs 
