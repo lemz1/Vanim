@@ -10,11 +10,11 @@ namespace Vanim
 	class CameraController : public ScriptableEntity
 	{
 	public:
-		void Create() {}
+		// void Create() override;
 
-		void Update(const double deltaTime);
+		void Update(const double deltaTime) override;
 
-		void Destroy() {}
+		// void Destroy() override;
 	public:
 		float movementSpeed = 5.0f;
 		float rotationSpeed = 0.5f;

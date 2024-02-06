@@ -29,6 +29,12 @@ namespace Vanim
 			return _registry->get<T>(_handle);
 		}
 
+		template<typename... T>
+		std::tuple<std::reference_wrapper<T>...> GetComponents()
+		{
+			return _registry->get<T...>(_handle);
+		}
+
 		template<typename T>
 		void RemoveComponent()
 		{
@@ -44,7 +50,7 @@ namespace Vanim
 		template<typename... T>
 		bool HasAllOf()
 		{
-			return _registry->any_of<T...>(_handle);
+			return _registry->all_of<T...>(_handle);
 		}
 
 		const entt::entity GetEntity() const { return _handle; }

@@ -1,7 +1,7 @@
 #include "editorpch.h"
 #include "CameraController.h"
 
-#include "VanimCore/Input/Input.h"
+#include "VanimCore.h"
 
 namespace Vanim
 {
@@ -12,11 +12,12 @@ namespace Vanim
 			return;
 		}
 
+
 		glm::vec2 mousePos = Input::GetMousePosition();
 		glm::vec2 deltaMousePos = mousePos - _lastMousePos;
 		_lastMousePos = mousePos;
 
-		auto& transform = GetComponent<TransformComponent>().transform;
-		auto& camera = GetComponent<CameraComponent>().camera;
+		auto [transform, camera] = GetComponents<TransformComponent, CameraComponent>();
+
 	}
 }

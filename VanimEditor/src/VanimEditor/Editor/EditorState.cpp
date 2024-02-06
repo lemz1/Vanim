@@ -3,6 +3,8 @@
 
 #include "VanimEditor/Rendering/ImGuiStyle.h"
 
+#include "VanimEditor/Script/CameraController.h"
+
 namespace Vanim
 {
 	void EditorState::Create()
@@ -40,7 +42,7 @@ namespace Vanim
 
 	void EditorState::Update(const double deltaTime)
 	{
-
+		_scene.Update(deltaTime);
 	}
 
 	void EditorState::Draw()
@@ -76,6 +78,6 @@ namespace Vanim
 
 	void EditorState::Destroy()
 	{
-
+		_scene.Destroy();
 	}
 }

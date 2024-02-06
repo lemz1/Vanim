@@ -16,12 +16,15 @@ namespace Vanim
 
 		void DestroyEntity(const Entity& entity);
 
+		void Update(const double deltaTime);
+		void Destroy();
+
 		template<typename Component>
 		std::vector<Entity> GetEntitiesOfType()
 		{
 			auto view = _registry.view<Component>();
 			std::vector<Entity> entities;
-			entities.reserve(view.size_hint());
+			entities.reserve(view.size());
 			for (auto entity : view)
 			{
 				entities.emplace_back(entity, &_registry);

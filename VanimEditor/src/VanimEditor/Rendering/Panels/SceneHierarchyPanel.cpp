@@ -19,9 +19,9 @@ namespace Vanim
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		for (auto& entity : _context->GetEntitiesOfType<entt::entity>())
+		for (auto entity : _context->_registry.view<entt::entity>())
 		{
-			DrawEntityNode(entity);
+			DrawEntityNode(Entity(entity, &_context->_registry));
 		}
 
 		ImGui::End();

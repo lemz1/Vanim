@@ -28,35 +28,7 @@ namespace Vanim
 		:	camera(camera)
 		{}
 	public:
-		Camera		camera;
-	};
-
-	struct NativeScriptComponent
-	{
-	public:
-		NativeScriptComponent() = default;
-		NativeScriptComponent(const NativeScriptComponent&) = default;
-
-		template<typename T>
-		void Bind()
-		{
-			InstantiateFunction = [&]() { _instance = new T(); };
-			DestroyInstanceFunction = [&]() { delete (T*)_instance; _instance = nullptr; };
-
-			CreateFunction = [](ScriptableEntity* instance) { ((T*)instance)->Create(); };
-			UpdateFunction = [](ScriptableEntity* instance, const double deltaTime) { ((T*)instance)->Update(deltaTime); };
-			DestroyFunction = [](ScriptableEntity* instance) { ((T*)instance)->Destroy(); };
-		}
-	public:
-		std::function<void()> InstantiateFunction;
-		std::function<void()> DestroyInstanceFunction;
-
-		std::function<void(ScriptableEntity*)> CreateFunction;
-		std::function<void(ScriptableEntity*, const double)> UpdateFunction;
-		std::function<void(ScriptableEntity*)> DestroyFunction;
-	private:
-		ScriptableEntity* _instance;
-		friend class State;
+		Camera camera;
 	};
 
 	struct TagComponent
@@ -69,6 +41,25 @@ namespace Vanim
 		{}
 	public:
 		const char* tag;
+	};
+
+	struct NativeScriptComponent
+	{
+	public:
+		NativeScriptComponent() = default;
+		NativeScriptComponent(const NativeScriptComponent&) = default;
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
+		}
+	public:
+		ScriptableEntity* (*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+		ScriptableEntity* instance;
 	};
 }
 
