@@ -5,10 +5,17 @@
 
 namespace Vanim
 {
+	enum class ShaderType : GLenum
+	{
+		VertexShader = GL_VERTEX_SHADER,
+		FragmentShader = GL_FRAGMENT_SHADER,
+		ComputeShader = GL_COMPUTE_SHADER,
+	};
+
 	struct ShaderInfo
 	{
 		const char* filePath;
-		GLenum type;
+		ShaderType type;
 	};
 
 	class Shader
@@ -23,6 +30,11 @@ namespace Vanim
 
 		void Bind();
 		void Unbind();
+
+		GLuint GetUniformLocation(const char* variable)
+		{
+			return glGetUniformLocation(_id, variable);
+		}
 
 		void SetFloat(
 			GLint location,

@@ -18,7 +18,7 @@ namespace Vanim
 			std::string sourceString = AssetManager::GetFileContent(infos[i].filePath);
 			const char* source = sourceString.c_str();
 
-			GLuint shaderID = glCreateShader(infos[i].type);
+			GLuint shaderID = glCreateShader((GLenum)infos[i].type);
 			glShaderSource(shaderID, 1, &source, nullptr);
 			glCompileShader(shaderID);
 

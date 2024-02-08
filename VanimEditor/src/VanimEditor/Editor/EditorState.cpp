@@ -11,33 +11,22 @@ namespace Vanim
 	{
 		ImGuiStyle::SetImGuiStyle();
 
-		_scene.CreateEntity("Test");
-		_scene.CreateEntity("Test2");
+		_renderer = MakeUnique<Renderer>();
+
+		auto camera = _scene.CreateEntity("Camera");
+		camera.AddComponent<TransformComponent>();
+		camera.AddComponent<CameraComponent>().camera.SetOrthographic(true);
+
+		auto quad = _scene.CreateEntity("Quad");
+		quad.AddComponent<TransformComponent>();
 
 		_sceneHierarchyPanel.SetContext(&_scene);
 
-		ShaderInfo infos[] = {
-			ShaderInfo
-			{
-				"assets/shaders/quad.vert.glsl",
-				GL_VERTEX_SHADER
-			},
-			ShaderInfo
-			{
-				"assets/shaders/quad.frag.glsl",
-				GL_FRAGMENT_SHADER
-			}
-		};
+		_sceneFrameBuffer = MakeUnique<FrameBuffer>();
 
-		_frameBuffer = MakeShared<FrameBuffer>();
+		_sceneTexture = MakeUnique<Texture>(Application::GetWindow()->GetWidth(), Application::GetWindow()->GetHeight());
 
-		_texture = MakeShared<Texture>(Application::GetWindow()->GetWidth(), Application::GetWindow()->GetHeight());
-
-		_frameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_texture);
-
-		_vertexArray = MakeShared<VertexArray>();
-
-		_shader = MakeShared<Shader>(2, infos);
+		_sceneFrameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_sceneTexture);
 	}
 
 	void EditorState::Update(const double deltaTime)
@@ -47,13 +36,40 @@ namespace Vanim
 
 	void EditorState::Draw()
 	{
-		_frameBuffer->Bind();
-		_shader->Bind();
-		_vertexArray->Bind();
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		_vertexArray->Unbind();
-		_shader->Unbind();	
-		_frameBuffer->Unbind();
+		_sceneFrameBuffer->Bind();
+
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		CameraComponent cc;
+		TransformComponent ctc;
+		for (auto& entity : _scene.GetEntitiesOfTypes<TransformComponent, CameraComponent>())
+		{
+			cc = entity.GetComponent<CameraComponent>();
+			ctc = entity.GetComponent<TransformComponent>();
+
+			break;
+		}
+
+		for (auto& entity : _scene.GetEntitiesOfType<TransformComponent>())
+		{
+			if (entity.HasAnyOf<CameraComponent>())
+			{
+				continue;
+			}
+
+			auto& tc = entity.GetComponent<TransformComponent>();
+			tc.transform[3][2] = -0.1f;
+
+			_renderer->DrawQuad(
+				tc.transform,
+				ctc.transform,
+				cc.camera.GetProjection(),
+				glm::vec4(1.0f, 0.5f, 0.5f, 1.0f)
+			);
+		}
+
+		_sceneFrameBuffer->Unbind();
 	}
 
 	void EditorState::DrawImGui()
@@ -66,11 +82,23 @@ namespace Vanim
 		ImGui::Begin("Scene", nullptr, sceneFlags);
 
 		ImVec2 size = ImGui::GetContentRegionAvail();
-		size.y = size.x / (16.f / 9.f);
 
-		ImTextureID textureID = reinterpret_cast<ImTextureID>((GLuint)*_texture);
+		if (size.x / (16.f / 9.f) < size.y)
+		{
+			size.y = size.x / (16.f / 9.f);
+		}
+		else
+		{
+			size.x = size.y * (16.f / 9.f);
+		}
+
+		ImTextureID textureID = reinterpret_cast<ImTextureID>((GLuint)*_sceneTexture);
 		ImGui::Image(textureID, size, ImVec2(0, 1), ImVec2(1, 0));
 
+		ImGui::End();
+
+		ImGui::Begin("Animator");
+		ImGui::Text("Animation");
 		ImGui::End();
 
 		_sceneHierarchyPanel.DrawImGui();

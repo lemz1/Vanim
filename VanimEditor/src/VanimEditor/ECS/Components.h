@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include "VanimCore.h"
+
 #include "ScriptableEntity.h"
 #include "VanimEditor/Rendering/Camera.h"
 
