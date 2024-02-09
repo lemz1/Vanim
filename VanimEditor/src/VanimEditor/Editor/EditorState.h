@@ -2,10 +2,6 @@
 
 #include "VanimCore.h"
 
-#include "VanimEditor/ECS/Scene.h"
-#include "VanimEditor/Rendering/Panels/SceneHierarchyPanel.h"
-#include "VanimEditor/Rendering/Renderer.h"
-
 namespace Vanim
 {
 	class EditorState : public State

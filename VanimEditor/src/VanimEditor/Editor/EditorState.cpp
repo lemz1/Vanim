@@ -14,8 +14,8 @@ namespace Vanim
 		_renderer = MakeUnique<Renderer>();
 
 		auto camera = _scene.CreateEntity("Camera");
-		camera.AddComponent<TransformComponent>();
-		camera.AddComponent<CameraComponent>().camera.SetOrthographic(true);
+		camera.AddComponent<TransformComponent>().transform[3][2] = -5.f;
+		camera.AddComponent<CameraComponent>();
 
 		auto quad = _scene.CreateEntity("Quad");
 		quad.AddComponent<TransformComponent>();
@@ -38,8 +38,7 @@ namespace Vanim
 	{
 		_sceneFrameBuffer->Bind();
 
-		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		_sceneFrameBuffer->Clear(0.3f, 0.3f, 0.3f, 1.0f);
 
 		CameraComponent cc;
 		TransformComponent ctc;
@@ -47,6 +46,8 @@ namespace Vanim
 		{
 			cc = entity.GetComponent<CameraComponent>();
 			ctc = entity.GetComponent<TransformComponent>();
+
+			_renderer->SetViewProjection(ctc.transform, cc.camera.GetProjection());
 
 			break;
 		}
@@ -59,12 +60,9 @@ namespace Vanim
 			}
 
 			auto& tc = entity.GetComponent<TransformComponent>();
-			tc.transform[3][2] = -0.1f;
 
 			_renderer->DrawQuad(
 				tc.transform,
-				ctc.transform,
-				cc.camera.GetProjection(),
 				glm::vec4(1.0f, 0.5f, 0.5f, 1.0f)
 			);
 		}

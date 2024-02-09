@@ -1,7 +1,7 @@
 #pragma once
 
-#include "VanimCore.h"
-#include "VanimEditor/ECS/Scene.h"
+#include "VanimCore/ECS/Entity.h"
+#include "VanimCore/ECS/Scene.h"
 
 namespace Vanim
 {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "VanimCore.h"
-
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 

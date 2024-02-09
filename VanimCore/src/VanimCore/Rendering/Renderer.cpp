@@ -1,4 +1,4 @@
-#include "editorpch.h"
+#include "corepch.h"
 #include "Renderer.h"
 
 namespace Vanim
@@ -37,14 +37,27 @@ namespace Vanim
 		_instance = nullptr;
 	}
 
+	void Renderer::SetViewProjection(
+		const glm::mat4& view, 
+		const glm::mat4& projection
+	)
+	{
+		_instance->_shaderQuad->Bind();
+
+		glm::mat4 viewProjection = projection * view;
+
+		GLuint uViewProjection = _instance->_shaderQuad->GetUniformLocation("u_ViewProjection");
+		_instance->_shaderQuad->Set4x4Matrix(uViewProjection, 1, false, (GLfloat*)&viewProjection);
+		
+		_instance->_shaderQuad->Unbind();
+	}
+
 	void Renderer::DrawQuad(
 		const glm::mat4& transform, 
-		const glm::mat4& view, 
-		const glm::mat4& projection,
 		const glm::vec4& color
 	)
 	{
-		glm::mat4 modelViewProjection = view * projection * transform;
+		glm::mat4 model = glm::inverse(transform);
 
 		_instance->_shaderQuad->Bind();
 		_instance->_vertexArrayQuad->Bind();
@@ -52,8 +65,8 @@ namespace Vanim
 		GLuint uColor = _instance->_shaderQuad->GetUniformLocation("u_Color");
 		_instance->_shaderQuad->SetFloats(uColor, color.r, color.g, color.b, color.a);
 
-		GLuint uModelViewProjection = _instance->_shaderQuad->GetUniformLocation("u_ModelViewProjection");
-		_instance->_shaderQuad->Set4x4Matrix(uModelViewProjection, 1, false, (GLfloat*)&modelViewProjection);
+		GLuint uModel = _instance->_shaderQuad->GetUniformLocation("u_Model");
+		_instance->_shaderQuad->Set4x4Matrix(uModel, 1, false, (GLfloat*)&model);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "VanimEditor/ECS/ScriptableEntity.h"
-#include "VanimEditor/ECS/Components.h"
+#include "VanimCore.h"
 
 #include <iostream>
 

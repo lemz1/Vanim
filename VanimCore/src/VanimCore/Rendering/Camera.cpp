@@ -1,4 +1,4 @@
-#include "editorpch.h"
+#include "corepch.h"
 #include "Camera.h"
 
 #include <glm/gtc/quaternion.hpp>

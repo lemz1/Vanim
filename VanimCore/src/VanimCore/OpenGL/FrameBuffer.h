@@ -19,6 +19,13 @@ namespace Vanim
 		void Bind();
 		void Unbind();
 
+		void Clear(
+			float r,
+			float g,
+			float b,
+			float a
+		);
+
 		bool operator==(const FrameBuffer& other) { return _id == other._id; }
 		bool operator!=(const FrameBuffer& other) { return !operator==(other); }
 		operator GLuint() const { return _id; }

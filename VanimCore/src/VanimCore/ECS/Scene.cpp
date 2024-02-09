@@ -1,4 +1,4 @@
-#include "editorpch.h"
+#include "corepch.h"
 #include "Scene.h"
 
 namespace Vanim

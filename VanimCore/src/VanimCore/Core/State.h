@@ -6,7 +6,7 @@ namespace Vanim
 	{
 	public:
 		State() = default;
-		~State() = default;
+		virtual ~State() = default;
 		
 		virtual void Create() {}
 

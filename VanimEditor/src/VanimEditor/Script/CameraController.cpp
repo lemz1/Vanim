@@ -1,8 +1,6 @@
 #include "editorpch.h"
 #include "CameraController.h"
 
-#include "VanimCore.h"
-
 namespace Vanim
 {
 	void CameraController::Update(const double deltaTime)

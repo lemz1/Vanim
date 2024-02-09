@@ -2,10 +2,10 @@
 
 #include <glm/glm.hpp>
 
-#include "VanimCore.h"
+#include "VanimCore/Base.h"
 
 #include "ScriptableEntity.h"
-#include "VanimEditor/Rendering/Camera.h"
+#include "VanimCore/Rendering/Camera.h"
 
 namespace Vanim
 {

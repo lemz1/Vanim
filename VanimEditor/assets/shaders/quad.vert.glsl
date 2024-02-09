@@ -1,6 +1,7 @@
 #version 460 core
 
-uniform mat4 u_ModelViewProjection;
+uniform mat4 u_ViewProjection;
+uniform mat4 u_Model;
 
 out vec2 o_TextureCoord;
 
@@ -12,7 +13,7 @@ void main()
 	float posX = float(x) - 0.5;
 	float posY = float(y) - 0.5;
 
-	gl_Position = u_ModelViewProjection * vec4(posX, posY, 0.0, 1.0);
+	gl_Position = u_ViewProjection * u_Model * vec4(posX, posY, 0.0, 1.0);
 
 	o_TextureCoord = vec2(mod(x, 2), mod(y, 2));
 }
