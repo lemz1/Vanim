@@ -56,8 +56,8 @@ namespace Vanim
 		{
 			glfwPollEvents();
 
-			const double time = glfwGetTime();
-			const double deltaTime = time - _time;
+			const float time = static_cast<float>(glfwGetTime());
+			const float deltaTime = time - _time;
 			_time = time;
 
 			_state->Update(deltaTime);

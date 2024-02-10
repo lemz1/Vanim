@@ -9,7 +9,7 @@ namespace Vanim
 	public:
 		void Create() override;
 
-		void Update(const double deltaTime) override;
+		void Update(const float deltaTime) override;
 
 		void Draw() override;
 

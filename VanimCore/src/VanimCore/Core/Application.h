@@ -28,13 +28,13 @@ namespace Vanim
 		static Window* GetWindow() { return _instance->_window; }
 		static bool IsRunning() { return _instance->_isRunning; }
 
-		static double GetTime() { return _instance->_time; }
+		static float GetTime() { return _instance->_time; }
 	private:
 		static Application* _instance;
 
 		Window*	_window = nullptr;
 		State*	_state = nullptr;
 		bool	_isRunning = false;
-		double	_time = 0;
+		float	_time = 0;
 	};
 }

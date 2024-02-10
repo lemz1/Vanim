@@ -10,7 +10,7 @@ namespace Vanim
 		
 		virtual void Create() {}
 
-		virtual void Update(const double deltaTime) {}
+		virtual void Update(const float deltaTime) {}
 
 		virtual void Draw() {}
 

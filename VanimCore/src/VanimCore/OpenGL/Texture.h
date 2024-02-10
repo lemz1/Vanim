@@ -18,6 +18,8 @@ namespace Vanim
 		void Bind();
 		void Unbind();
 
+		void SetViewport();
+
 		bool operator==(const Texture& other) { return _id == other._id; }
 		bool operator!=(const Texture& other) { return !operator==(other); }
 		operator GLuint() const { return _id; }

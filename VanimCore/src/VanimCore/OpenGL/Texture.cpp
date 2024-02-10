@@ -41,4 +41,9 @@ namespace Vanim
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+	void Texture::SetViewport()
+	{
+		glViewport(0, 0, _width, _height);
+	}
 }

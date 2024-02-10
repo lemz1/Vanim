@@ -16,7 +16,7 @@ namespace Vanim
 
 		void DestroyEntity(const Entity& entity);
 
-		void Update(const double deltaTime);
+		void Update(const float deltaTime);
 		void Destroy();
 
 		template<typename Component>

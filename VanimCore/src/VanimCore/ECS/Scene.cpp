@@ -15,7 +15,7 @@ namespace Vanim
         _registry.destroy(entity.GetEntity());
     }
 
-    void Scene::Update(const double deltaTime)
+    void Scene::Update(const float deltaTime)
     {
         for (auto& entity : GetEntitiesOfType<NativeScriptComponent>())
         {

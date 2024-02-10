@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include "VanimCore/Base.h"
 
@@ -14,11 +16,22 @@ namespace Vanim
 	public:
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::mat4& transform)
-			: transform(transform)
+		TransformComponent(
+			const glm::vec3 position
+		)
+		:	position(position)
 		{}
+
+		glm::mat4 AsMat4() const
+		{
+			return glm::translate(glm::mat4(1.f), position) 
+				 * glm::mat4_cast(rotation) 
+				 * glm::scale(glm::mat4(1.f), scale);
+		}
 	public:
-		glm::mat4 transform{ 1.0f };
+		glm::vec3 position{ 0.f, 0.f, 0.f };
+		glm::quat rotation{ 1.0f, 0.f, 0.f, 0.f };
+		glm::vec3 scale{ 1.f, 1.f, 1.f };
 	};
 
 	struct CameraComponent

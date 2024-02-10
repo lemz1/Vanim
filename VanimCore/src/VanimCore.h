@@ -26,4 +26,6 @@
 #include "VanimCore/Rendering/Camera.h"
 #include "VanimCore/Rendering/Panels/SceneHierarchyPanel.h"
 
+#include "VanimCore/Math/Math.h"
+
 #include "VanimCore/Base.h"

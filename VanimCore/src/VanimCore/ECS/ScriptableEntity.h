@@ -46,7 +46,7 @@ namespace Vanim
 		}
 	protected:
 		virtual void Create() {};
-		virtual void Update(const double deltaTime) {};
+		virtual void Update(const float deltaTime) {};
 		virtual void Destroy() {};
 	private:
 		Entity _entity;

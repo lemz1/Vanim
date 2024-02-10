@@ -22,7 +22,7 @@ namespace Vanim
 		GLboolean normalized,
 		uint32_t componentCount,
 		GLintptr offset,
-		GLsizeiptr stride
+		GLsizei stride
 	)
 	{
 		glVertexAttribPointer(

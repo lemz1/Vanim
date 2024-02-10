@@ -5,6 +5,7 @@
 
 #include "VanimEditor/Script/CameraController.h"
 
+
 namespace Vanim
 {
 	void EditorState::Create()
@@ -14,8 +15,18 @@ namespace Vanim
 		_renderer = MakeUnique<Renderer>();
 
 		auto camera = _scene.CreateEntity("Camera");
-		camera.AddComponent<TransformComponent>().transform[3][2] = -5.f;
-		camera.AddComponent<CameraComponent>();
+		camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.f));
+
+		const uint32_t sceneFrameBufferWidth = (uint32_t)((float)Application::GetWindow()->GetWidth() * 0.5f);
+		const uint32_t sceneFrameBufferHeight = (uint32_t)((float)Application::GetWindow()->GetHeight() * 0.5f);
+
+		CameraSpecification cameraSpec = {};
+		cameraSpec.width = sceneFrameBufferWidth;
+		cameraSpec.height = sceneFrameBufferHeight;
+		cameraSpec.isOrthographic = false;
+
+		camera.AddComponent<CameraComponent>(cameraSpec);
+		camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
 		auto quad = _scene.CreateEntity("Quad");
 		quad.AddComponent<TransformComponent>();
@@ -24,18 +35,20 @@ namespace Vanim
 
 		_sceneFrameBuffer = MakeUnique<FrameBuffer>();
 
-		_sceneTexture = MakeUnique<Texture>(Application::GetWindow()->GetWidth(), Application::GetWindow()->GetHeight());
+		_sceneTexture = MakeUnique<Texture>(sceneFrameBufferWidth, sceneFrameBufferHeight);
 
 		_sceneFrameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_sceneTexture);
 	}
 
-	void EditorState::Update(const double deltaTime)
+	void EditorState::Update(const float deltaTime)
 	{
 		_scene.Update(deltaTime);
 	}
 
 	void EditorState::Draw()
 	{
+		_sceneTexture->SetViewport();
+
 		_sceneFrameBuffer->Bind();
 
 		_sceneFrameBuffer->Clear(0.3f, 0.3f, 0.3f, 1.0f);
@@ -47,7 +60,7 @@ namespace Vanim
 			cc = entity.GetComponent<CameraComponent>();
 			ctc = entity.GetComponent<TransformComponent>();
 
-			_renderer->SetViewProjection(ctc.transform, cc.camera.GetProjection());
+			_renderer->SetViewProjection(ctc.AsMat4(), cc.camera.GetProjection());
 
 			break;
 		}
@@ -62,7 +75,7 @@ namespace Vanim
 			auto& tc = entity.GetComponent<TransformComponent>();
 
 			_renderer->DrawQuad(
-				tc.transform,
+				tc.AsMat4(),
 				glm::vec4(1.0f, 0.5f, 0.5f, 1.0f)
 			);
 		}
