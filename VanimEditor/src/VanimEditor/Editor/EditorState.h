@@ -2,6 +2,8 @@
 
 #include "VanimCore.h"
 
+#include "VanimEditor/Math/Graphing/Graph.h"
+
 namespace Vanim
 {
 	class EditorState : public State
@@ -23,5 +25,7 @@ namespace Vanim
 		Unique<Renderer> _renderer;
 		Unique<FrameBuffer> _sceneFrameBuffer;
 		Unique<Texture> _sceneTexture;
+
+		Graph graph;
 	};
 }

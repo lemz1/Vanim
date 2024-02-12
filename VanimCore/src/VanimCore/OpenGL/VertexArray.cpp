@@ -25,6 +25,8 @@ namespace Vanim
 		GLsizei stride
 	)
 	{
+		glBindVertexArray(_id);
+
 		glVertexAttribPointer(
 			bindingIndex, 
 			componentCount, 
@@ -36,6 +38,8 @@ namespace Vanim
 		glEnableVertexAttribArray(bindingIndex);
 
 		glVertexArrayVertexBuffer(_id, bindingIndex, vertexBuffer, offset, stride);
+
+		glBindVertexArray(0);
 	}
 
 	void VertexArray::LinkIndexBuffer(GLuint indexBuffer)

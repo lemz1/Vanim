@@ -17,5 +17,7 @@
 #include <set>
 #include <unordered_set>
 #include <type_traits>
+#include <cmath>
+#include <limits>
 
 #include <cassert>

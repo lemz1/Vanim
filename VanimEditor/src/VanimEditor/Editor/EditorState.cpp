@@ -4,6 +4,7 @@
 #include "VanimEditor/Rendering/ImGuiStyle.h"
 
 #include "VanimEditor/Script/CameraController.h"
+#include "VanimEditor/Math/Graphing/Graph.h"
 
 
 namespace Vanim
@@ -23,10 +24,10 @@ namespace Vanim
 		CameraSpecification cameraSpec = {};
 		cameraSpec.width = sceneFrameBufferWidth;
 		cameraSpec.height = sceneFrameBufferHeight;
-		cameraSpec.isOrthographic = false;
+		cameraSpec.isOrthographic = true;
 
 		camera.AddComponent<CameraComponent>(cameraSpec);
-		camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		//camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
 		auto quad = _scene.CreateEntity("Quad");
 		quad.AddComponent<TransformComponent>();
@@ -38,6 +39,20 @@ namespace Vanim
 		_sceneTexture = MakeUnique<Texture>(sceneFrameBufferWidth, sceneFrameBufferHeight);
 
 		_sceneFrameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_sceneTexture);
+
+		graph.CalculateCoordinates(
+			[](float x) -> float
+			{
+				return 2 * x * x - 1;
+			}, 
+			GraphData2D 
+			{
+				-1.f,
+				1.f,
+				0.01f,
+				{ } 
+			}
+		);
 	}
 
 	void EditorState::Update(const float deltaTime)
@@ -79,6 +94,8 @@ namespace Vanim
 				glm::vec4(1.0f, 0.5f, 0.5f, 1.0f)
 			);
 		}
+
+		graph.Draw();
 
 		_sceneFrameBuffer->Unbind();
 	}
