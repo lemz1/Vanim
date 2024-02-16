@@ -2,7 +2,7 @@
 
 #include "VanimCore.h"
 
-#include "VanimEditor/Math/Graphing/Graph.h"
+#include "VanimEditor/Math/Graphing/Graph2D.h"
 
 namespace Vanim
 {
@@ -26,6 +26,6 @@ namespace Vanim
 		Unique<FrameBuffer> _sceneFrameBuffer;
 		Unique<Texture> _sceneTexture;
 
-		Graph graph;
+		Unique<Graph2D> _graph;
 	};
 }

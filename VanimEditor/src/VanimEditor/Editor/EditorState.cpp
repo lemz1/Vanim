@@ -4,8 +4,6 @@
 #include "VanimEditor/Rendering/ImGuiStyle.h"
 
 #include "VanimEditor/Script/CameraController.h"
-#include "VanimEditor/Math/Graphing/Graph.h"
-
 
 namespace Vanim
 {
@@ -18,8 +16,8 @@ namespace Vanim
 		auto camera = _scene.CreateEntity("Camera");
 		camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.f));
 
-		const uint32_t sceneFrameBufferWidth = (uint32_t)((float)Application::GetWindow()->GetWidth() * 0.5f);
-		const uint32_t sceneFrameBufferHeight = (uint32_t)((float)Application::GetWindow()->GetHeight() * 0.5f);
+		const uint32_t sceneFrameBufferWidth = (uint32_t)((float)Application::GetWindow()->GetWidth() * 1.0f);
+		const uint32_t sceneFrameBufferHeight = (uint32_t)((float)Application::GetWindow()->GetHeight() * 1.0f);
 
 		CameraSpecification cameraSpec = {};
 		cameraSpec.width = sceneFrameBufferWidth;
@@ -40,16 +38,21 @@ namespace Vanim
 
 		_sceneFrameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_sceneTexture);
 
-		graph.CalculateCoordinates(
+		GraphSpecification2D graphSpec;
+		graphSpec.lineWidth = 5.f;
+		graphSpec.color = Color::babyBlue;
+		_graph = MakeUnique<Graph2D>(graphSpec);
+
+		_graph->CalculateCoordinates(
 			[](float x) -> float
 			{
-				return 2 * x * x - 1;
+				return 2.0f * x * x - 0.75f;
 			}, 
 			GraphData2D 
 			{
-				-1.f,
+				-1.f,	
 				1.f,
-				0.01f,
+				0.05f,
 				{ } 
 			}
 		);
@@ -95,7 +98,7 @@ namespace Vanim
 			);
 		}
 
-		graph.Draw();
+		_graph->Draw();
 
 		_sceneFrameBuffer->Unbind();
 	}
