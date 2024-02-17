@@ -8,5 +8,5 @@ out vec4 fragColor;
 
 void main() 
 {
-	fragColor = vec4(u_Color.xy * o_TexCoord.xy, u_Color.za);
+	fragColor = u_Color;
 }

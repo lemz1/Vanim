@@ -81,6 +81,18 @@ namespace Vanim
 		ScriptableEntity* instance;
 	};
 
+	struct Layer2DComponent
+	{
+	public:
+		Layer2DComponent() = default;
+		Layer2DComponent(const Layer2DComponent&) = default;
+		Layer2DComponent(uint32_t layer)
+		:	layer(layer)
+		{}
+	public:
+		uint32_t layer;
+	};
+
 	struct Mesh2DComponent
 	{
 	public:

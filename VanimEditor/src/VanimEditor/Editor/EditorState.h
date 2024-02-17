@@ -25,5 +25,6 @@ namespace Vanim
 		Unique<Renderer> _renderer;
 		Unique<FrameBuffer> _sceneFrameBuffer;
 		Unique<Texture> _sceneTexture;
+		Unique<RenderBuffer> _sceneDepthBuffer;
 	};
 }

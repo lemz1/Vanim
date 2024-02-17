@@ -27,6 +27,18 @@ namespace Vanim
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	void FrameBuffer::LinkRenderBuffer(
+		GLenum attachment, 
+		GLuint renderBuffer
+	)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, _id);
+
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderBuffer);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
 	void FrameBuffer::Bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -40,6 +52,6 @@ namespace Vanim
 	void FrameBuffer::Clear(float r, float g, float b, float a)
 	{
 		glClearColor(r, g, b, a);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 }

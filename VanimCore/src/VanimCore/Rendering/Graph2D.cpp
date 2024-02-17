@@ -99,6 +99,8 @@ namespace Vanim
 		_numIndices = numCoordinates * 3;
 		indices.reserve(_numIndices);
 
+		glm::vec4 bounds = glm::vec4(FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
+
 		size_t vertexIndex = 0;
 		for (auto& segment : coordinates)
 		{
@@ -119,7 +121,7 @@ namespace Vanim
 
 				glm::vec2 rotatedDir = rotationMatrix * dir;
 
-				float actualLineWidth = lineWidth * 0.0025f;
+				float actualLineWidth = lineWidth * 0.01f;
 				glm::vec2 vertexOffset = rotatedDir * (actualLineWidth / 2.0f);
 
 				// padding is currently not perfect
@@ -130,12 +132,40 @@ namespace Vanim
 				{
 					extraPadding = glm::vec2(0);
 				}
-				
-				vertices.emplace_back(p1 + vertexOffset);
-				vertices.emplace_back(p1 - vertexOffset);
 
-				vertices.emplace_back(p2 + vertexOffset + extraPadding);
-				vertices.emplace_back(p2 - vertexOffset + extraPadding);
+				glm::vec2 p1_1 = p1 + vertexOffset;
+				glm::vec2 p1_2 = p1 - vertexOffset;
+				
+				glm::vec2 p2_1 = p2 + vertexOffset + extraPadding;
+				glm::vec2 p2_2 = p2 - vertexOffset + extraPadding;
+
+				{ // update bounds if necessary (bounds needed for uv calculation)
+					bounds.x = Math::Min(bounds.x, p1_1.x); // most left vertex
+					bounds.y = Math::Max(bounds.y, p1_1.x); // most right vertex
+					bounds.z = Math::Min(bounds.z, p1_1.y); // lowest vertex
+					bounds.w = Math::Max(bounds.w, p1_1.y); // highest vertex
+
+					bounds.x = Math::Min(bounds.x, p1_2.x); // most left vertex
+					bounds.y = Math::Max(bounds.y, p1_2.x); // most right vertex
+					bounds.z = Math::Min(bounds.z, p1_2.y); // lowest vertex
+					bounds.w = Math::Max(bounds.w, p1_2.y); // highest vertex
+
+					bounds.x = Math::Min(bounds.x, p2_1.x); // most left vertex
+					bounds.y = Math::Max(bounds.y, p2_1.x); // most right vertex
+					bounds.z = Math::Min(bounds.z, p2_1.y); // lowest vertex
+					bounds.w = Math::Max(bounds.w, p2_1.y); // highest vertex
+
+					bounds.x = Math::Min(bounds.x, p2_2.x); // most left vertex
+					bounds.y = Math::Max(bounds.y, p2_2.x); // most right vertex
+					bounds.z = Math::Min(bounds.z, p2_2.y); // lowest vertex
+					bounds.w = Math::Max(bounds.w, p2_2.y); // highest vertex
+				}
+
+				vertices.emplace_back(p1_1);
+				vertices.emplace_back(p1_2);
+
+				vertices.emplace_back(p2_1);
+				vertices.emplace_back(p2_2);
 				
 
 				indices.emplace_back(vertexIndex + 0);
@@ -157,5 +187,11 @@ namespace Vanim
 
 		_vao->LinkVertexBuffer(*_vbo, 0, GL_FLOAT, GL_FALSE, 2, 0, sizeof(glm::vec2));
 		_vao->LinkIndexBuffer(*_ibo);
+
+		_shader->Bind();
+
+		_shader->SetFloats(_shader->GetUniformLocation("u_Bounds"), bounds.x, bounds.y, bounds.z, bounds.w);
+		
+		_shader->Unbind();
 	}
 }

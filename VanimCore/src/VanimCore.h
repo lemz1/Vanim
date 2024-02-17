@@ -12,6 +12,7 @@
 #include "VanimCore/Util/Color.h"
 #include "VanimCore/Util/Ease.h"
 
+#include "VanimCore/OpenGL/RenderBuffer.h"
 #include "VanimCore/OpenGL/VertexBuffer.h"
 #include "VanimCore/OpenGL/FrameBuffer.h"
 #include "VanimCore/OpenGL/IndexBuffer.h"

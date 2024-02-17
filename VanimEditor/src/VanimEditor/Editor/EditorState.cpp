@@ -31,22 +31,22 @@ namespace Vanim
 		quad.AddComponent<TransformComponent>();
 
 		auto graph = _scene.CreateEntity("Graph");
-		graph.AddComponent<TransformComponent>();
+		graph.AddComponent<TransformComponent>(glm::vec3(0.0f, 0.0f, 0.1f)); // moving it a bit so that it is infront of the quad
 		
 		GraphSpecification2D graphSpec;
-		graphSpec.lineWidth = 10.f;
+		graphSpec.lineWidth = 3.f;
 		graphSpec.color = Color::emeraldGreen;
 		auto& gc = graph.AddComponent<Graph2DComponent>(graphSpec);
 
 		gc.graph.CalculateCoordinates(
 			[](float x) -> float
 			{
-				return Math::Pow(x, 4) - 1.5f * Math::Pow(x, 2) - 1.5f;
+				return x * x;
 			},
 			GraphData2D
 			{
-				-3.0f,
-				3.0f,
+				-1.0f,
+				1.0f,
 				0.05f,
 				{ }
 			}
@@ -54,11 +54,15 @@ namespace Vanim
 
 		_sceneHierarchyPanel.SetContext(&_scene);
 
+		glEnable(GL_DEPTH_TEST);
+
 		_sceneFrameBuffer = MakeUnique<FrameBuffer>();
 
 		_sceneTexture = MakeUnique<Texture>(sceneFrameBufferWidth, sceneFrameBufferHeight);
+		_sceneDepthBuffer = MakeUnique<RenderBuffer>(sceneFrameBufferWidth, sceneFrameBufferHeight);
 
 		_sceneFrameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_sceneTexture);
+		_sceneFrameBuffer->LinkRenderBuffer(GL_DEPTH_ATTACHMENT, *_sceneDepthBuffer);
 	}
 
 	void EditorState::Update(const float deltaTime)

@@ -16,6 +16,11 @@ namespace Vanim
 			GLuint texture
 		);
 
+		void LinkRenderBuffer(
+			GLenum attachment,
+			GLuint renderBuffer
+		);
+
 		void Bind() const;
 		void Unbind() const;
 
