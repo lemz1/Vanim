@@ -15,8 +15,8 @@ namespace Vanim
 		);
 		~IndexBuffer();
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
 		bool operator==(const IndexBuffer& other) { return _id == other._id; }
 		bool operator!=(const IndexBuffer& other) { return !operator==(other); }

@@ -15,8 +15,8 @@ namespace Vanim
 		);
 		~VertexBuffer();
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
 		bool operator==(const VertexBuffer& other) { return _id == other._id; }
 		bool operator!=(const VertexBuffer& other) { return !operator==(other); }

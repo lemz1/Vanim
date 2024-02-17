@@ -35,12 +35,12 @@ namespace Vanim
 		_id = 0;
 	}
 
-	void Shader::Bind()
+	void Shader::Bind() const
 	{
 		glUseProgram(_id);
 	}
 
-	void Shader::Unbind()
+	void Shader::Unbind() const
 	{
 		glUseProgram(0);
 	}

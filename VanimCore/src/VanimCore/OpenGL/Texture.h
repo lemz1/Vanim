@@ -15,8 +15,8 @@ namespace Vanim
 		);
 		~Texture();
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
 		void SetViewport();
 

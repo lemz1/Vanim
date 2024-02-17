@@ -7,7 +7,11 @@
 #include "VanimCore/Base.h"
 
 #include "ScriptableEntity.h"
+#include "VanimCore/Rendering/Graph2D.h"
 #include "VanimCore/Rendering/Camera.h"
+#include "VanimCore/Rendering/Mesh2D.h"
+
+#include <vector>
 
 namespace Vanim
 {
@@ -65,7 +69,7 @@ namespace Vanim
 		NativeScriptComponent(const NativeScriptComponent&) = default;
 
 		template<typename T>
-		void Bind()
+		void Bind() const
 		{
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->instance; nsc->instance = nullptr; };
@@ -75,6 +79,35 @@ namespace Vanim
 		void (*DestroyScript)(NativeScriptComponent*);
 
 		ScriptableEntity* instance;
+	};
+
+	struct Mesh2DComponent
+	{
+	public:
+		Mesh2DComponent() = default;
+		Mesh2DComponent(const Mesh2DComponent&) = delete;
+		Mesh2DComponent(
+			std::vector<glm::vec2> vertices,
+			std::vector<glm::vec2> texCoords,
+			std::vector<GLuint> indices,
+			const Shared<Shader>& shader
+		)
+		:	mesh(vertices, texCoords, indices, shader)
+		{}
+	public:
+		Mesh2D mesh;
+	};
+
+	struct Graph2DComponent
+	{
+	public:
+		Graph2DComponent() = default;
+		Graph2DComponent(const Graph2DComponent&) = delete;
+		Graph2DComponent(const GraphSpecification2D& spec = {})
+		:	graph(spec)
+		{}
+	public:
+		Graph2D graph;
 	};
 }
 

@@ -24,11 +24,33 @@ namespace Vanim
 		cameraSpec.height = sceneFrameBufferHeight;
 		cameraSpec.isOrthographic = true;
 
-		camera.AddComponent<CameraComponent>(cameraSpec);
+		camera.AddComponent<CameraComponent>(Camera(cameraSpec));
 		//camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
 		auto quad = _scene.CreateEntity("Quad");
 		quad.AddComponent<TransformComponent>();
+
+		auto graph = _scene.CreateEntity("Graph");
+		graph.AddComponent<TransformComponent>();
+		
+		GraphSpecification2D graphSpec;
+		graphSpec.lineWidth = 10.f;
+		graphSpec.color = Color::emeraldGreen;
+		auto& gc = graph.AddComponent<Graph2DComponent>(graphSpec);
+
+		gc.graph.CalculateCoordinates(
+			[](float x) -> float
+			{
+				return Math::Pow(x, 4) - 1.5f * Math::Pow(x, 2) - 1.5f;
+			},
+			GraphData2D
+			{
+				-3.0f,
+				3.0f,
+				0.05f,
+				{ }
+			}
+		);
 
 		_sceneHierarchyPanel.SetContext(&_scene);
 
@@ -37,25 +59,6 @@ namespace Vanim
 		_sceneTexture = MakeUnique<Texture>(sceneFrameBufferWidth, sceneFrameBufferHeight);
 
 		_sceneFrameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_sceneTexture);
-
-		GraphSpecification2D graphSpec;
-		graphSpec.lineWidth = 5.f;
-		graphSpec.color = Color::babyBlue;
-		_graph = MakeUnique<Graph2D>(graphSpec);
-
-		_graph->CalculateCoordinates(
-			[](float x) -> float
-			{
-				return 2.0f * x * x - 0.75f;
-			}, 
-			GraphData2D 
-			{
-				-1.f,	
-				1.f,
-				0.05f,
-				{ } 
-			}
-		);
 	}
 
 	void EditorState::Update(const float deltaTime)
@@ -92,13 +95,28 @@ namespace Vanim
 
 			auto& tc = entity.GetComponent<TransformComponent>();
 
-			_renderer->DrawQuad(
-				tc.AsMat4(),
-				glm::vec4(1.0f, 0.5f, 0.5f, 1.0f)
-			);
-		}
+			if (entity.HasAnyOf<Mesh2DComponent>())
+			{
 
-		_graph->Draw();
+			}
+			else if (entity.HasAnyOf<Graph2DComponent>())
+			{
+				auto& graph = entity.GetComponent<Graph2DComponent>().graph;
+
+				_renderer->DrawGraph2D(
+					graph, 
+					tc.AsMat4(),
+					cc.camera.GetProjection() * glm::inverse(ctc.AsMat4())
+				);
+			}
+			else
+			{
+				_renderer->DrawQuad(
+					tc.AsMat4(),
+					glm::vec4(1.0f, 0.5f, 0.5f, 1.0f)
+				);
+			}
+		}
 
 		_sceneFrameBuffer->Unbind();
 	}

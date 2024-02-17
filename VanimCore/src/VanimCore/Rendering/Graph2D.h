@@ -1,11 +1,12 @@
 #pragma once
 
-#include "VanimCore.h"
+#include "VanimCore/Base.h"
+#include "VanimCore/Util/Color.h"
+#include "VanimCore/OpenGL/VertexArray.h"
+#include "VanimCore/OpenGL/Shader.h"
 
 #include <glm/glm.hpp>
 #include <vector>
-
-#include "VanimEditor/Util/Color.h"
 
 namespace Vanim
 {
@@ -30,20 +31,22 @@ namespace Vanim
 			float (*Function)(float), 
 			const GraphData2D& data
 		);
-
-		void Draw();
 	public:
 		float		lineWidth;
 		glm::vec4	color;
 	private:
 		size_t _numIndices = 0;
 
-		Unique<Shader> _shader;
+		Unique<Shader> _shader; // should probably be in renderer.cpp
 
-		Unique<VertexBuffer> _vbo;
 		Unique<VertexArray> _vao;
+		Unique<VertexBuffer> _vbo;
 		Unique<IndexBuffer> _ibo;
 
 		GLuint _colorID = 0;
+		GLuint _viewProjID = 0;
+		GLuint _modelID = 0;
+
+		friend class Renderer;
 	};
 }

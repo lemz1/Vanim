@@ -32,12 +32,12 @@ namespace Vanim
 		_id = 0;
 	}
 
-	void Texture::Bind()
+	void Texture::Bind() const
 	{
 		glBindTexture(GL_TEXTURE_2D, _id);
 	}
 
-	void Texture::Unbind()
+	void Texture::Unbind() const
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

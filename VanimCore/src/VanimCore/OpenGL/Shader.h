@@ -28,8 +28,8 @@ namespace Vanim
 		);
 		~Shader();
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
 		GLuint GetUniformLocation(const char* variable)
 		{

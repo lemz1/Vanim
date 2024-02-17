@@ -27,12 +27,12 @@ namespace Vanim
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void FrameBuffer::Bind()
+	void FrameBuffer::Bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, _id);
 	}
 
-	void FrameBuffer::Unbind()
+	void FrameBuffer::Unbind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

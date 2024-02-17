@@ -47,12 +47,12 @@ namespace Vanim
 		glVertexArrayElementBuffer(_id, indexBuffer);
 	}
 
-	void VertexArray::Bind()
+	void VertexArray::Bind() const
 	{
 		glBindVertexArray(_id);
 	}
 
-	void VertexArray::Unbind()
+	void VertexArray::Unbind() const
 	{
 		glBindVertexArray(0);
 	}

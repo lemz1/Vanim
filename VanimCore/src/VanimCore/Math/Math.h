@@ -37,6 +37,30 @@ namespace Vanim
 			return a < b ? a : b;
 		}
 
+		// value should be a floating point
+		template<typename T>
+		static Arithmetic Pow(T value, int32_t exponent)
+		{
+			T result = 1;
+			
+			if (exponent < 0)
+			{
+				for (int32_t i = 0; i > exponent; i--)
+				{
+					result /= value;
+				}
+			} 
+			else 
+			{
+				for (int32_t i = 0; i < exponent; i++)
+				{
+					result *= value;
+				}
+			}
+
+			return result;
+		}
+
 		static glm::vec3 QuaternionInRadians(const glm::quat& quaternion)
 		{
 			return glm::axis(quaternion) * glm::angle(quaternion);

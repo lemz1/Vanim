@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VanimCore.h"
+#include "VanimCore/Base.h"
 
 namespace Vanim
 {

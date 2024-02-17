@@ -16,8 +16,8 @@ namespace Vanim
 			GLuint texture
 		);
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
 		void Clear(
 			float r,

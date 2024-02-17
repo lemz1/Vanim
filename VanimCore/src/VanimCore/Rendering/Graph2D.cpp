@@ -1,5 +1,7 @@
-#include "editorpch.h"
+#include "corepch.h"
 #include "Graph2D.h"
+
+#include "VanimCore/Math/Math.h"
 
 namespace Vanim
 {
@@ -15,7 +17,7 @@ namespace Vanim
 		},
 		ShaderInfo
 		{
-			"assets/shaders/Graph2D.frag.glsl",
+			"assets/shaders/default.frag.glsl",
 			ShaderType::FragmentShader
 		}
 		};
@@ -23,6 +25,8 @@ namespace Vanim
 		_shader = MakeUnique<Shader>(2, infos);
 
 		_colorID = _shader->GetUniformLocation("u_Color");
+		_viewProjID = _shader->GetUniformLocation("u_ViewProjection");
+		_modelID = _shader->GetUniformLocation("u_Model");
 	}
 
 	void Graph2D::CalculateCoordinates(
@@ -153,21 +157,5 @@ namespace Vanim
 
 		_vao->LinkVertexBuffer(*_vbo, 0, GL_FLOAT, GL_FALSE, 2, 0, sizeof(glm::vec2));
 		_vao->LinkIndexBuffer(*_ibo);
-	}
-
-	void Graph2D::Draw()
-	{
-		_shader->Bind();
-		_shader->SetFloats(_colorID, color.r, color.g, color.b, color.a);
-
-		_vao->Bind();
-
-		glLineWidth(lineWidth);
-		
-		glDrawElements(GL_TRIANGLES, _numIndices, GL_UNSIGNED_INT, nullptr);
-
-		_vao->Unbind();
-
-		_shader->Unbind();
 	}
 }

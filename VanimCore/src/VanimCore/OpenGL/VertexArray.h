@@ -26,8 +26,8 @@ namespace Vanim
 		
 		void LinkIndexBuffer(GLuint indexBuffer);
 
-		void Bind();
-		void Unbind();
+		void Bind() const;
+		void Unbind() const;
 
 		bool operator==(const VertexArray& other) { return _id == other._id; }
 		bool operator!=(const VertexArray& other) { return !operator==(other); }
