@@ -46,7 +46,5 @@ namespace Vanim
 		}
 	private:
 		entt::registry _registry;
-
-		friend class SceneHierarchyPanel;
 	};
 }

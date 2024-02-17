@@ -41,12 +41,12 @@ namespace Vanim
 		gc.graph.CalculateCoordinates(
 			[](float x) -> float
 			{
-				return x * x;
+				return 0.1f * x * x * x;
 			},
 			GraphData2D
 			{
-				-1.0f,
-				1.0f,
+				-4.0f,
+				4.0f,
 				0.05f,
 				{ }
 			}

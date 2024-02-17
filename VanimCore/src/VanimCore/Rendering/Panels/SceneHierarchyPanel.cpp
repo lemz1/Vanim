@@ -21,9 +21,10 @@ namespace Vanim
 
 		// i would have done _context->GetEntitiesOfType, however entt::entity makes 
 		// it not work since it needs to then use size_hint which the template doesnt have
-		for (auto entity : _context->_registry.view<entt::entity>())
+		// so im using GetEntitiesOfTypes instead
+		for (auto& entity : _context->GetEntitiesOfTypes<entt::entity>())
 		{
-			DrawEntityNode(Entity(entity, &_context->_registry));
+			DrawEntityNode(entity);
 		}
 
 		ImGui::End();
