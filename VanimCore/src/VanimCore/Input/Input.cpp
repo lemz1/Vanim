@@ -7,93 +7,95 @@
 
 namespace Vanim
 {
-	bool Input::keyStates[512] = { false };
-	bool Input::mouseStates[512] = { false };
+	bool previousKeyStates[512] = { false };
+	bool currentKeyStates[512] = { false };
+
+	bool previousMouseStates[32] = { false };
+	bool currentMouseStates[32] = { false };
+
+	void Input::UpdateStates()
+	{
+		memcpy(previousKeyStates, currentKeyStates, sizeof(currentKeyStates));
+	}
 
 	bool Input::JustPressedKey(Key key)
 	{
-		if (keyStates[(KeyCode)key])
+		GLFWwindow* window = Application::GetWindow()->GetHandle();
+		KeyCode keyCode = (KeyCode)key;
+
+		currentKeyStates[keyCode] = glfwGetKey(window, keyCode) == GLFW_PRESS;
+		
+		if (previousKeyStates[keyCode])
 		{
 			return false;
 		}
 		
-		if (glfwGetKey(Application::GetWindow()->GetHandle(), (KeyCode)key) == GLFW_PRESS)
-		{
-			keyStates[(KeyCode)key] = true;
-			return true;
-		}
-
-		return false;
+		return currentKeyStates[keyCode];
 	}
 
 	bool Input::PressedKey(Key key)
 	{
-		if (glfwGetKey(Application::GetWindow()->GetHandle(), (KeyCode)key) == GLFW_PRESS)
-		{
-			keyStates[(KeyCode)key] = true;
-			return true;
-		}
+		GLFWwindow* window = Application::GetWindow()->GetHandle();
+		KeyCode keyCode = (KeyCode)key;
 
-		return false;
+		currentKeyStates[keyCode] = glfwGetKey(window, keyCode) == GLFW_PRESS;
+
+		return currentKeyStates[keyCode];
 	}
 
 	bool Input::ReleasedKey(Key key)
 	{
-		if (!keyStates[(KeyCode)key])
+		GLFWwindow* window = Application::GetWindow()->GetHandle();
+		KeyCode keyCode = (KeyCode)key;
+
+		currentKeyStates[keyCode] = glfwGetKey(window, keyCode) == GLFW_PRESS;
+
+		if (!previousKeyStates[keyCode])
 		{
 			return false;
 		}
 
-		if (glfwGetKey(Application::GetWindow()->GetHandle(), (KeyCode)key) == GLFW_RELEASE)
-		{
-			keyStates[(KeyCode)key] = false;
-			return true;
-		}
-
-		return false;
+		return !currentKeyStates[keyCode];
 	}
 
 	bool Input::JustPressedMouseButton(MouseButton button)
 	{
-		if (mouseStates[(MouseCode)button])
+		GLFWwindow* window = Application::GetWindow()->GetHandle();
+		MouseCode mouseCode = (MouseCode)button;
+
+		currentMouseStates[mouseCode] = glfwGetMouseButton(window, mouseCode) == GLFW_PRESS;
+
+		if (previousMouseStates[mouseCode])
 		{
 			return false;
 		}
 
-		if (glfwGetMouseButton(Application::GetWindow()->GetHandle(), (MouseCode)button) == GLFW_PRESS)
-		{
-			mouseStates[(MouseCode)button] = true;
-			return true;
-		}
-
-		return false;
+		return currentMouseStates[mouseCode];
 	}
 
 	bool Input::PressedMouseButton(MouseButton button)
 	{
-		if (glfwGetMouseButton(Application::GetWindow()->GetHandle(), (MouseCode)button) == GLFW_PRESS)
-		{
-			mouseStates[(MouseCode)button] = true;
-			return true;
-		}
+		GLFWwindow* window = Application::GetWindow()->GetHandle();
+		MouseCode mouseCode = (MouseCode)button;
 
-		return false;
+		currentMouseStates[mouseCode] = glfwGetMouseButton(window, mouseCode) == GLFW_PRESS;
+
+		return currentMouseStates[mouseCode];
 	}
 
 	bool Input::ReleasedMouseButton(MouseButton button)
 	{
-		if (!mouseStates[(MouseCode)button])
+		GLFWwindow* window = Application::GetWindow()->GetHandle();
+		MouseCode mouseCode = (MouseCode)button;
+
+		currentMouseStates[mouseCode] = glfwGetMouseButton(window, mouseCode) == GLFW_PRESS;
+
+		if (!previousMouseStates[mouseCode])
 		{
 			return false;
 		}
 
-		if (glfwGetMouseButton(Application::GetWindow()->GetHandle(), (MouseCode)button) == GLFW_RELEASE)
-		{
-			mouseStates[(MouseCode)button] = false;
-			return true;
-		}
-
-		return false;
+		return !currentMouseStates[mouseCode];
 	}
 
 	glm::vec2 Input::GetMousePosition()

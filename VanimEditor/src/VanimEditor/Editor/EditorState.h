@@ -26,5 +26,7 @@ namespace Vanim
 		Unique<FrameBuffer> _sceneFrameBuffer;
 		Unique<Texture> _sceneTexture;
 		Unique<RenderBuffer> _sceneDepthBuffer;
+
+		bool _showDebugInfo = false;
 	};
 }

@@ -31,7 +31,7 @@ namespace Vanim
 		quad.AddComponent<TransformComponent>();
 
 		auto graph = _scene.CreateEntity("Graph");
-		graph.AddComponent<TransformComponent>(glm::vec3(0.0f, 0.0f, 0.1f)); // moving it a bit so that it is infront of the quad
+		graph.AddComponent<TransformComponent>(glm::vec3(0.0f, 0.0f, 0.1f)); // moving it a bit so that it is rendered infront of the quad
 		
 		GraphSpecification2D graphSpec;
 		graphSpec.lineWidth = 3.f;
@@ -63,11 +63,18 @@ namespace Vanim
 
 		_sceneFrameBuffer->LinkTexture(GL_COLOR_ATTACHMENT0, *_sceneTexture);
 		_sceneFrameBuffer->LinkRenderBuffer(GL_DEPTH_ATTACHMENT, *_sceneDepthBuffer);
+
+		Application::GetWindow()->SetVSync(false);
 	}
 
 	void EditorState::Update(const float deltaTime)
 	{
 		_scene.Update(deltaTime);
+
+		if (Input::JustPressedKey(Key::F3))
+		{
+			_showDebugInfo = !_showDebugInfo;
+		}
 	}
 
 	void EditorState::Draw()
@@ -155,6 +162,14 @@ namespace Vanim
 		ImGui::End();
 
 		_sceneHierarchyPanel.DrawImGui();
+
+		if (_showDebugInfo)
+		{
+			ImGui::Begin("DebugInfo");
+			ImGui::Text("%d FPS", (int32_t)ImGui::GetIO().Framerate);
+			ImGui::Text("Entities: %d", _scene.GetEntitiesOfTypes<entt::entity>().size());
+			ImGui::End();
+		}
 	}
 
 	void EditorState::Destroy()

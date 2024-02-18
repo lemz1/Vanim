@@ -5,6 +5,8 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 
+#include "VanimCore/Input/Input.h"
+
 namespace Vanim
 {
 	Application* Application::_instance = nullptr;
@@ -55,6 +57,8 @@ namespace Vanim
 		while (!glfwWindowShouldClose(_window->_handle))
 		{
 			glfwPollEvents();
+
+			Input::UpdateStates();
 
 			const float time = static_cast<float>(glfwGetTime());
 			const float deltaTime = time - _time;
