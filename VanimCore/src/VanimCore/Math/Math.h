@@ -61,6 +61,55 @@ namespace Vanim
 			return result;
 		}
 
+		template<typename T>
+		static Arithmetic Sin(T radians)
+		{
+			return (T)sin(radians);
+		}
+
+		template<typename T>
+		static Arithmetic Cos(T radians)
+		{
+			return (T)cos(radians);
+		}
+
+		template<typename T>
+		static Arithmetic Tan(T radians)
+		{
+			return (T)tan(radians);
+		}
+
+		template<typename T>
+		static Arithmetic Atan(T radians)
+		{
+			return (T)atan(radians);
+		}
+
+		template<typename T>
+		static Arithmetic Atan2(T x, T y)
+		{
+			return (T)atan2(x, y);
+		}
+
+		// values should be floating point
+		template<typename T>
+		static Arithmetic Lerp(T a, T b, T t)
+		{
+			return a + ((b - a) * t);
+		}
+
+		// values should be floating point
+		template<typename T>
+		static Arithmetic InverseLerp(T a, T b, T value)
+		{
+			if (a == b)
+			{
+				return (T)0;
+			}
+
+			return (value - a) / (b - a);
+		}
+
 		static glm::vec3 QuaternionInRadians(const glm::quat& quaternion)
 		{
 			return glm::axis(quaternion) * glm::angle(quaternion);

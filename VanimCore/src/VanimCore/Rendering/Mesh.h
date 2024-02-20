@@ -10,26 +10,27 @@
 
 namespace Vanim
 {
-	class Mesh2D
+	class Mesh
 	{
 	public:
-		Mesh2D() = default;
-		Mesh2D(
+		Mesh() = default;
+		Mesh(
 			std::vector<glm::vec2> vertices,
 			std::vector<glm::vec2> texCoords,
-			std::vector<GLuint> indices,
-			const Shared<Shader>& shader
+			std::vector<GLuint> indices
 		);
+
+		const Shared<VertexArray>& GetVAO() const { return _vao; }
+		const GLsizei NumIndices() const { return _indices.size(); }
 	private:
 		std::vector<glm::vec2> _vertices;
 		std::vector<glm::vec2> _texCoords;
 		std::vector<GLuint> _indices;
 
-		Unique<VertexArray> _vao;
-		Unique<VertexBuffer> _vbo, _tcbo;
-		Unique<IndexBuffer> _ibo;
-
-		Shared<Shader> _shader;
+		Shared<VertexArray> _vao;
+		Shared<VertexBuffer> _vbo;
+		Shared<VertexBuffer> _tcbo;
+		Shared<IndexBuffer> _ibo;
 
 		friend class Renderer;
 	};

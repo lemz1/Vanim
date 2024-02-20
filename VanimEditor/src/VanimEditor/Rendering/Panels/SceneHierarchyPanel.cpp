@@ -1,4 +1,4 @@
-#include "corepch.h"
+#include "editorpch.h"
 #include "SceneHierarchyPanel.h"
 
 #include <imgui.h>

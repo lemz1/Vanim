@@ -11,7 +11,20 @@ namespace Vanim
 	{
 		ImGuiStyle::SetImGuiStyle();
 
-		_renderer = MakeUnique<Renderer>();
+		ShaderInfo infos[] = {
+			ShaderInfo
+			{
+				"Assets/Shaders/default.vert.glsl",
+				ShaderType::VertexShader
+			},
+			ShaderInfo
+			{
+				"Assets/Shaders/default.frag.glsl",
+				ShaderType::FragmentShader
+			},
+		};
+
+		_animationShader = MakeShared<Shader>(2, infos);
 
 		auto camera = _scene.CreateEntity("Camera");
 		camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.f));
@@ -23,34 +36,34 @@ namespace Vanim
 		cameraSpec.width = sceneFrameBufferWidth;
 		cameraSpec.height = sceneFrameBufferHeight;
 		cameraSpec.isOrthographic = true;
+		cameraSpec.orthographicSize = 9.0f;
 
 		camera.AddComponent<CameraComponent>(Camera(cameraSpec));
 		//camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
-		auto quad = _scene.CreateEntity("Quad");
-		quad.AddComponent<TransformComponent>();
-
 		auto graph = _scene.CreateEntity("Graph");
 		graph.AddComponent<TransformComponent>(glm::vec3(0.0f, 0.0f, 0.1f)); // moving it a bit so that it is rendered infront of the quad
-		
-		GraphSpecification2D graphSpec;
-		graphSpec.lineWidth = 3.f;
+
+		GraphSpecification graphSpec;
+		graphSpec.lineWidth = 5.f;
 		graphSpec.color = Color::emeraldGreen;
-		auto& gc = graph.AddComponent<Graph2DComponent>(graphSpec);
+		auto& gc = graph.AddComponent<GraphComponent>(graphSpec);
 
 		gc.graph.CalculateCoordinates(
 			[](float x) -> float
 			{
-				return 0.1f * x * x * x;
+				return Math::Sin(x);
 			},
-			GraphData2D
+			GraphData
 			{
-				-4.0f,
-				4.0f,
+				-8.0f,
+				8.0f,
 				0.05f,
 				{ }
 			}
 		);
+
+		graph.AddComponent<AnimationComponent>(_animationShader, gc.graph.GetVAO(), gc.graph.NumIndices());
 
 		_sceneHierarchyPanel.SetContext(&_scene);
 
@@ -85,48 +98,27 @@ namespace Vanim
 
 		_sceneFrameBuffer->Clear(0.3f, 0.3f, 0.3f, 1.0f);
 
-		CameraComponent cc;
-		TransformComponent ctc;
+		glm::mat4 viewProjection{ 1.f };
 		for (auto& entity : _scene.GetEntitiesOfTypes<TransformComponent, CameraComponent>())
 		{
-			cc = entity.GetComponent<CameraComponent>();
-			ctc = entity.GetComponent<TransformComponent>();
+			auto& projection = entity.GetComponent<CameraComponent>().camera.GetProjection();
+			auto& view = entity.GetComponent<TransformComponent>().AsMat4();
 
-			_renderer->SetViewProjection(ctc.AsMat4(), cc.camera.GetProjection());
+			viewProjection = projection * glm::inverse(view);
 
 			break;
 		}
 
-		for (auto& entity : _scene.GetEntitiesOfType<TransformComponent>())
+		for (auto& entity : _scene.GetEntitiesOfType<AnimationComponent>())
 		{
-			if (entity.HasAnyOf<CameraComponent>())
-			{
-				continue;
-			}
-
+			auto& ac = entity.GetComponent<AnimationComponent>();
 			auto& tc = entity.GetComponent<TransformComponent>();
 
-			if (entity.HasAnyOf<Mesh2DComponent>())
-			{
+			ac.shader.SetColor(ac.color);
+			ac.shader.SetViewProjection(viewProjection);
+			ac.shader.SetModelMatrix(tc.AsMat4());
 
-			}
-			else if (entity.HasAnyOf<Graph2DComponent>())
-			{
-				auto& graph = entity.GetComponent<Graph2DComponent>().graph;
-
-				_renderer->DrawGraph2D(
-					graph, 
-					tc.AsMat4(),
-					cc.camera.GetProjection() * glm::inverse(ctc.AsMat4())
-				);
-			}
-			else
-			{
-				_renderer->DrawQuad(
-					tc.AsMat4(),
-					glm::vec4(1.0f, 0.5f, 0.5f, 1.0f)
-				);
-			}
+			Renderer::DrawMesh(ac.shader, ac.GetVAO(), ac.NumIndices());
 		}
 
 		_sceneFrameBuffer->Unbind();

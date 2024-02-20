@@ -1,37 +1,18 @@
 #include "corepch.h"
-#include "Graph2D.h"
+#include "Graph.h"
 
 #include "VanimCore/Math/Math.h"
 
 namespace Vanim
 {
-	Graph2D::Graph2D(const GraphSpecification2D& spec)
+	Graph::Graph(const GraphSpecification& spec)
 	:	lineWidth(spec.lineWidth),
 		color(spec.color)
-	{
-		ShaderInfo infos[] = {
-		ShaderInfo
-		{
-			"assets/shaders/Graph2D.vert.glsl",
-			ShaderType::VertexShader
-		},
-		ShaderInfo
-		{
-			"assets/shaders/default.frag.glsl",
-			ShaderType::FragmentShader
-		}
-		};
+	{}
 
-		_shader = MakeUnique<Shader>(2, infos);
-
-		_colorID = _shader->GetUniformLocation("u_Color");
-		_viewProjID = _shader->GetUniformLocation("u_ViewProjection");
-		_modelID = _shader->GetUniformLocation("u_Model");
-	}
-
-	void Graph2D::CalculateCoordinates(
+	void Graph::CalculateCoordinates(
 		float (*Function)(float),
-		const GraphData2D& data
+		const GraphData& data
 	)
 	{
 		size_t segments = data.excludes.size() + 1;
@@ -99,6 +80,7 @@ namespace Vanim
 		_numIndices = numCoordinates * 3;
 		indices.reserve(_numIndices);
 
+		// x = left, y = right, z = bottom, w = top
 		glm::vec4 bounds = glm::vec4(FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
 
 		size_t vertexIndex = 0;
@@ -139,26 +121,26 @@ namespace Vanim
 				glm::vec2 p2_1 = p2 + vertexOffset + extraPadding;
 				glm::vec2 p2_2 = p2 - vertexOffset + extraPadding;
 
-				{ // update bounds if necessary (bounds needed for uv calculation)
-					bounds.x = Math::Min(bounds.x, p1_1.x); // most left vertex
-					bounds.y = Math::Max(bounds.y, p1_1.x); // most right vertex
-					bounds.z = Math::Min(bounds.z, p1_1.y); // lowest vertex
-					bounds.w = Math::Max(bounds.w, p1_1.y); // highest vertex
+				{ // update bounds if necessary (bounds needed for texCoord calculation)
+					bounds.x = Math::Min(bounds.x, p1_1.x);
+					bounds.y = Math::Max(bounds.y, p1_1.x);
+					bounds.z = Math::Min(bounds.z, p1_1.y);
+					bounds.w = Math::Max(bounds.w, p1_1.y);
 
-					bounds.x = Math::Min(bounds.x, p1_2.x); // most left vertex
-					bounds.y = Math::Max(bounds.y, p1_2.x); // most right vertex
-					bounds.z = Math::Min(bounds.z, p1_2.y); // lowest vertex
-					bounds.w = Math::Max(bounds.w, p1_2.y); // highest vertex
+					bounds.x = Math::Min(bounds.x, p1_2.x);
+					bounds.y = Math::Max(bounds.y, p1_2.x);
+					bounds.z = Math::Min(bounds.z, p1_2.y);
+					bounds.w = Math::Max(bounds.w, p1_2.y);
 
-					bounds.x = Math::Min(bounds.x, p2_1.x); // most left vertex
-					bounds.y = Math::Max(bounds.y, p2_1.x); // most right vertex
-					bounds.z = Math::Min(bounds.z, p2_1.y); // lowest vertex
-					bounds.w = Math::Max(bounds.w, p2_1.y); // highest vertex
+					bounds.x = Math::Min(bounds.x, p2_1.x);
+					bounds.y = Math::Max(bounds.y, p2_1.x);
+					bounds.z = Math::Min(bounds.z, p2_1.y);
+					bounds.w = Math::Max(bounds.w, p2_1.y);
 
-					bounds.x = Math::Min(bounds.x, p2_2.x); // most left vertex
-					bounds.y = Math::Max(bounds.y, p2_2.x); // most right vertex
-					bounds.z = Math::Min(bounds.z, p2_2.y); // lowest vertex
-					bounds.w = Math::Max(bounds.w, p2_2.y); // highest vertex
+					bounds.x = Math::Min(bounds.x, p2_2.x);
+					bounds.y = Math::Max(bounds.y, p2_2.x);
+					bounds.z = Math::Min(bounds.z, p2_2.y);
+					bounds.w = Math::Max(bounds.w, p2_2.y);
 				}
 
 				vertices.emplace_back(p1_1);
@@ -180,18 +162,24 @@ namespace Vanim
 			}
 		}
 
-		_vao = MakeUnique<VertexArray>();
+		std::vector<glm::vec2> texCoords;
+		texCoords.reserve(vertices.size());
+		for (auto& vertex : vertices)
+		{
+			texCoords.emplace_back(
+				Math::InverseLerp(bounds.x, bounds.y, vertex.x),
+				Math::InverseLerp(bounds.z, bounds.w, vertex.y)
+			);
+		}
 
-		_vbo = MakeUnique<VertexBuffer>(sizeof(glm::vec2) * vertices.size(), vertices.data());
-		_ibo = MakeUnique<IndexBuffer>(sizeof(GLuint) * indices.size(), indices.data());
+		_vao = MakeShared<VertexArray>();
+
+		_vbo = MakeShared<VertexBuffer>(sizeof(glm::vec2) * vertices.size(), vertices.data());
+		_tcbo = MakeShared<VertexBuffer>(sizeof(glm::vec2) * texCoords.size(), texCoords.data());
+		_ibo = MakeShared<IndexBuffer>(sizeof(GLuint) * indices.size(), indices.data());
 
 		_vao->LinkVertexBuffer(*_vbo, 0, GL_FLOAT, GL_FALSE, 2, 0, sizeof(glm::vec2));
+		_vao->LinkVertexBuffer(*_tcbo, 1, GL_FLOAT, GL_FALSE, 2, 0, sizeof(glm::vec2));
 		_vao->LinkIndexBuffer(*_ibo);
-
-		_shader->Bind();
-
-		_shader->SetFloats(_shader->GetUniformLocation("u_Bounds"), bounds.x, bounds.y, bounds.z, bounds.w);
-		
-		_shader->Unbind();
 	}
 }

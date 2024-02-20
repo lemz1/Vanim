@@ -2,7 +2,7 @@
 
 #include "VanimCore.h"
 
-#include "VanimCore/Rendering/Graph2D.h"
+#include "VanimEditor/Rendering/Panels/SceneHierarchyPanel.h"
 
 namespace Vanim
 {
@@ -19,10 +19,11 @@ namespace Vanim
 
 		void Destroy() override;
 	private:
+		Shared<Shader> _animationShader;
+
 		Scene _scene;
 		SceneHierarchyPanel _sceneHierarchyPanel;
 
-		Unique<Renderer> _renderer;
 		Unique<FrameBuffer> _sceneFrameBuffer;
 		Unique<Texture> _sceneTexture;
 		Unique<RenderBuffer> _sceneDepthBuffer;

@@ -7,9 +7,11 @@
 #include "VanimCore/Base.h"
 
 #include "ScriptableEntity.h"
-#include "VanimCore/Rendering/Graph2D.h"
+
+#include "VanimCore/Rendering/AnimationShader.h"
 #include "VanimCore/Rendering/Camera.h"
-#include "VanimCore/Rendering/Mesh2D.h"
+#include "VanimCore/Rendering/Graph.h"
+#include "VanimCore/Rendering/Mesh.h"
 
 #include <vector>
 
@@ -81,45 +83,70 @@ namespace Vanim
 		ScriptableEntity* instance;
 	};
 
-	struct Layer2DComponent
+	struct AnimationComponent
 	{
 	public:
-		Layer2DComponent() = default;
-		Layer2DComponent(const Layer2DComponent&) = default;
-		Layer2DComponent(uint32_t layer)
+		AnimationComponent() = delete;
+		AnimationComponent(const AnimationComponent&) = default;
+		AnimationComponent(
+			const Shared<Shader>& shader,
+			const Shared<VertexArray>& vao,
+			GLsizei numIndices
+		)
+		:	shader(shader),
+			_vao(vao),
+			_numIndices(numIndices)
+		{}
+
+		const Shared<VertexArray>& GetVAO() const { return _vao; }
+		GLsizei NumIndices() const { return _numIndices; }
+	public:
+		AnimationShader shader;
+
+		glm::vec4 color = Color::fireBrick;
+	private:
+		Shared<VertexArray> _vao;
+		GLsizei _numIndices;
+	};
+
+	struct LayerComponent
+	{
+	public:
+		LayerComponent() = default;
+		LayerComponent(const LayerComponent&) = default;
+		LayerComponent(uint32_t layer)
 		:	layer(layer)
 		{}
 	public:
 		uint32_t layer;
 	};
 
-	struct Mesh2DComponent
+	struct MeshComponent
 	{
 	public:
-		Mesh2DComponent() = default;
-		Mesh2DComponent(const Mesh2DComponent&) = delete;
-		Mesh2DComponent(
+		MeshComponent() = default;
+		MeshComponent(const MeshComponent&) = delete;
+		MeshComponent(
 			std::vector<glm::vec2> vertices,
 			std::vector<glm::vec2> texCoords,
-			std::vector<GLuint> indices,
-			const Shared<Shader>& shader
+			std::vector<GLuint> indices
 		)
-		:	mesh(vertices, texCoords, indices, shader)
+		:	mesh(vertices, texCoords, indices)
 		{}
 	public:
-		Mesh2D mesh;
+		Mesh mesh;
 	};
 
-	struct Graph2DComponent
+	struct GraphComponent
 	{
 	public:
-		Graph2DComponent() = default;
-		Graph2DComponent(const Graph2DComponent&) = delete;
-		Graph2DComponent(const GraphSpecification2D& spec = {})
+		GraphComponent() = default;
+		GraphComponent(const GraphComponent&) = delete;
+		GraphComponent(const GraphSpecification& spec = {})
 		:	graph(spec)
 		{}
 	public:
-		Graph2D graph;
+		Graph graph;
 	};
 }
 
