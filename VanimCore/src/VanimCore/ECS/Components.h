@@ -93,6 +93,16 @@ namespace Vanim
 			const Shared<VertexArray>& vao,
 			GLsizei numIndices
 		)
+		:	shader(MakeShared<AnimationShader>(shader)),
+			_vao(vao),
+			_numIndices(numIndices)
+		{}
+
+		AnimationComponent(
+			const Shared<AnimationShader>& shader,
+			const Shared<VertexArray>& vao,
+			GLsizei numIndices
+		)
 		:	shader(shader),
 			_vao(vao),
 			_numIndices(numIndices)
@@ -101,7 +111,7 @@ namespace Vanim
 		const Shared<VertexArray>& GetVAO() const { return _vao; }
 		GLsizei NumIndices() const { return _numIndices; }
 	public:
-		AnimationShader shader;
+		Shared<AnimationShader> shader;
 
 		glm::vec4 color = Color::fireBrick;
 	private:

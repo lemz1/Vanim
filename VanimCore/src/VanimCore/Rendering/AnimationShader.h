@@ -24,13 +24,13 @@ namespace Vanim
 
 		void SetModelMatrix(const glm::mat4& modelMatrix);
 
+		void SetProgress(float progress);
 		void SetColor(const glm::vec4& color);
-
-		operator const Shared<Shader>&() const { return _shader; }
 	private:
 		Shared<Shader>	_shader;
 		GLint			_viewProjectionID;
 		GLint			_modelMatrixID;
+		GLint			_progressID;
 		GLint			_colorID;
 	};
 }

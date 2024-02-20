@@ -4,6 +4,8 @@
 
 #include "VanimEditor/Rendering/Panels/SceneHierarchyPanel.h"
 
+#include "VanimEditor/Animation/CreateAnimation.h"
+
 namespace Vanim
 {
 	class EditorState : public State
@@ -19,7 +21,9 @@ namespace Vanim
 
 		void Destroy() override;
 	private:
-		Shared<Shader> _animationShader;
+		Shared<Shader> _defaultShader;
+		Unique<CreateAnimation> _createAnimation;
+
 
 		Scene _scene;
 		SceneHierarchyPanel _sceneHierarchyPanel;

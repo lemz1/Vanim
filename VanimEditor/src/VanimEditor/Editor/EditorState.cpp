@@ -5,6 +5,8 @@
 
 #include "VanimEditor/Script/CameraController.h"
 
+#include "VanimEditor/Animation/IAnimation.h"
+
 namespace Vanim
 {
 	void EditorState::Create()
@@ -14,17 +16,17 @@ namespace Vanim
 		ShaderInfo infos[] = {
 			ShaderInfo
 			{
-				"Assets/Shaders/default.vert.glsl",
+				"Assets/Shaders/Default.vert.glsl",
 				ShaderType::VertexShader
 			},
 			ShaderInfo
 			{
-				"Assets/Shaders/default.frag.glsl",
+				"Assets/Shaders/Default.frag.glsl",
 				ShaderType::FragmentShader
 			},
 		};
 
-		_animationShader = MakeShared<Shader>(2, infos);
+		_defaultShader = MakeShared<Shader>(2, infos);
 
 		auto camera = _scene.CreateEntity("Camera");
 		camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.f));
@@ -45,7 +47,7 @@ namespace Vanim
 		graph.AddComponent<TransformComponent>(glm::vec3(0.0f, 0.0f, 0.1f)); // moving it a bit so that it is rendered infront of the quad
 
 		GraphSpecification graphSpec;
-		graphSpec.lineWidth = 5.f;
+		graphSpec.lineWidth = 15.f;
 		graphSpec.color = Color::emeraldGreen;
 		auto& gc = graph.AddComponent<GraphComponent>(graphSpec);
 
@@ -63,11 +65,13 @@ namespace Vanim
 			}
 		);
 
-		graph.AddComponent<AnimationComponent>(_animationShader, gc.graph.GetVAO(), gc.graph.NumIndices());
+		graph.AddComponent<AnimationComponent>(_defaultShader, gc.graph.GetVAO(), gc.graph.NumIndices());
 
 		_sceneHierarchyPanel.SetContext(&_scene);
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		_sceneFrameBuffer = MakeUnique<FrameBuffer>();
 
@@ -78,6 +82,9 @@ namespace Vanim
 		_sceneFrameBuffer->LinkRenderBuffer(GL_DEPTH_ATTACHMENT, *_sceneDepthBuffer);
 
 		Application::GetWindow()->SetVSync(false);
+
+		std::vector<Entity> createEntities = { graph };
+		_createAnimation = MakeUnique<CreateAnimation>(createEntities);
 	}
 
 	void EditorState::Update(const float deltaTime)
@@ -88,6 +95,10 @@ namespace Vanim
 		{
 			_showDebugInfo = !_showDebugInfo;
 		}
+
+		float progress = Math::Min(Application::GetTime() / 3.0f, 1.0f);
+
+		_createAnimation->Play(Ease::OutBounce(Ease::InCubic(progress)));
 	}
 
 	void EditorState::Draw()
@@ -96,7 +107,7 @@ namespace Vanim
 
 		_sceneFrameBuffer->Bind();
 
-		_sceneFrameBuffer->Clear(0.3f, 0.3f, 0.3f, 1.0f);
+		_sceneFrameBuffer->Clear(0.0f, 0.0f, 0.0f, 1.0f);
 
 		glm::mat4 viewProjection{ 1.f };
 		for (auto& entity : _scene.GetEntitiesOfTypes<TransformComponent, CameraComponent>())
@@ -114,11 +125,11 @@ namespace Vanim
 			auto& ac = entity.GetComponent<AnimationComponent>();
 			auto& tc = entity.GetComponent<TransformComponent>();
 
-			ac.shader.SetColor(ac.color);
-			ac.shader.SetViewProjection(viewProjection);
-			ac.shader.SetModelMatrix(tc.AsMat4());
+			ac.shader->SetViewProjection(viewProjection);
+			ac.shader->SetModelMatrix(tc.AsMat4());
+			ac.shader->SetColor(ac.color);
 
-			Renderer::DrawMesh(ac.shader, ac.GetVAO(), ac.NumIndices());
+			Renderer::DrawMesh(ac.shader->GetShader(), ac.GetVAO(), ac.NumIndices());
 		}
 
 		_sceneFrameBuffer->Unbind();
