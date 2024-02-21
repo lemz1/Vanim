@@ -113,7 +113,7 @@ namespace Vanim
 	public:
 		Shared<AnimationShader> shader;
 
-		glm::vec4 color = Color::fireBrick;
+		glm::vec4 color = Color::red6;
 	private:
 		Shared<VertexArray> _vao;
 		GLsizei _numIndices;
@@ -152,8 +152,8 @@ namespace Vanim
 	public:
 		GraphComponent() = default;
 		GraphComponent(const GraphComponent&) = delete;
-		GraphComponent(const GraphSpecification& spec = {})
-		:	graph(spec)
+		GraphComponent(float lineWidth = 5.0f)
+		:	graph(lineWidth)
 		{}
 	public:
 		Graph graph;

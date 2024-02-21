@@ -5,9 +5,8 @@
 
 namespace Vanim
 {
-	Graph::Graph(const GraphSpecification& spec)
-	:	lineWidth(spec.lineWidth),
-		color(spec.color)
+	Graph::Graph(float lineWidth )
+	:	lineWidth(lineWidth)
 	{}
 
 	void Graph::CalculateCoordinates(
@@ -28,8 +27,8 @@ namespace Vanim
 			increment = 0.01f;
 		}
 
-		float lastX = data.minX;
-		float x = data.minX;
+		float lastX = data.bounds.left;
+		float x = data.bounds.left;
 
 		size_t numCoordinates = 0;
 		while (true)
@@ -45,12 +44,12 @@ namespace Vanim
 				continue;
 			}
 
-			if (lastX < data.maxX && x > data.maxX)
+			if (lastX < data.bounds.right && x > data.bounds.right)
 			{
-				x = data.maxX; // make sure that maxX is included
+				x = data.bounds.right; // make sure that bounds.right is included
 			}
 
-			if (x > data.maxX)
+			if (x > data.bounds.right)
 			{
 				coordinates.at(segmentIndex).pop_back(); // pop duplicate coordinate
 				numCoordinates--;
@@ -79,9 +78,6 @@ namespace Vanim
 		std::vector<GLuint> indices;
 		_numIndices = numCoordinates * 3;
 		indices.reserve(_numIndices);
-
-		// x = left, y = right, z = bottom, w = top
-		glm::vec4 bounds = glm::vec4(FLT_MAX, -FLT_MAX, FLT_MAX, -FLT_MAX);
 
 		size_t vertexIndex = 0;
 		for (auto& segment : coordinates)
@@ -115,39 +111,11 @@ namespace Vanim
 					extraPadding = glm::vec2(0);
 				}
 
-				glm::vec2 p1_1 = p1 + vertexOffset;
-				glm::vec2 p1_2 = p1 - vertexOffset;
-				
-				glm::vec2 p2_1 = p2 + vertexOffset + extraPadding;
-				glm::vec2 p2_2 = p2 - vertexOffset + extraPadding;
+				vertices.emplace_back(p1 + vertexOffset);
+				vertices.emplace_back(p1 - vertexOffset);
 
-				{ // update bounds if necessary (bounds needed for texCoord calculation)
-					bounds.x = Math::Min(bounds.x, p1_1.x);
-					bounds.y = Math::Max(bounds.y, p1_1.x);
-					bounds.z = Math::Min(bounds.z, p1_1.y);
-					bounds.w = Math::Max(bounds.w, p1_1.y);
-
-					bounds.x = Math::Min(bounds.x, p1_2.x);
-					bounds.y = Math::Max(bounds.y, p1_2.x);
-					bounds.z = Math::Min(bounds.z, p1_2.y);
-					bounds.w = Math::Max(bounds.w, p1_2.y);
-
-					bounds.x = Math::Min(bounds.x, p2_1.x);
-					bounds.y = Math::Max(bounds.y, p2_1.x);
-					bounds.z = Math::Min(bounds.z, p2_1.y);
-					bounds.w = Math::Max(bounds.w, p2_1.y);
-
-					bounds.x = Math::Min(bounds.x, p2_2.x);
-					bounds.y = Math::Max(bounds.y, p2_2.x);
-					bounds.z = Math::Min(bounds.z, p2_2.y);
-					bounds.w = Math::Max(bounds.w, p2_2.y);
-				}
-
-				vertices.emplace_back(p1_1);
-				vertices.emplace_back(p1_2);
-
-				vertices.emplace_back(p2_1);
-				vertices.emplace_back(p2_2);
+				vertices.emplace_back(p2 + vertexOffset + extraPadding);
+				vertices.emplace_back(p2 - vertexOffset + extraPadding);
 				
 
 				indices.emplace_back(vertexIndex + 0);
@@ -167,8 +135,8 @@ namespace Vanim
 		for (auto& vertex : vertices)
 		{
 			texCoords.emplace_back(
-				Math::InverseLerp(bounds.x, bounds.y, vertex.x),
-				Math::InverseLerp(bounds.z, bounds.w, vertex.y)
+				Math::InverseLerp(data.bounds.left, data.bounds.right, vertex.x),
+				Math::InverseLerp(data.bounds.bottom, data.bounds.top, vertex.y)
 			);
 		}
 

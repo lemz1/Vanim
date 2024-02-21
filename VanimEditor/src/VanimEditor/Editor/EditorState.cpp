@@ -11,6 +11,10 @@ namespace Vanim
 {
 	void EditorState::Create()
 	{
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		ImGuiStyle::SetImGuiStyle();
 
 		ShaderInfo infos[] = {
@@ -31,8 +35,8 @@ namespace Vanim
 		auto camera = _scene.CreateEntity("Camera");
 		camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.f));
 
-		const uint32_t sceneFrameBufferWidth = (uint32_t)((float)Application::GetWindow()->GetWidth() * 1.0f);
-		const uint32_t sceneFrameBufferHeight = (uint32_t)((float)Application::GetWindow()->GetHeight() * 1.0f);
+		const uint32_t sceneFrameBufferWidth = (uint32_t)((float)Application::GetWindow()->GetWidth() * 0.5f);
+		const uint32_t sceneFrameBufferHeight = (uint32_t)((float)Application::GetWindow()->GetHeight() * 0.5f);
 
 		CameraSpecification cameraSpec = {};
 		cameraSpec.width = sceneFrameBufferWidth;
@@ -46,10 +50,7 @@ namespace Vanim
 		auto graph = _scene.CreateEntity("Graph");
 		graph.AddComponent<TransformComponent>(glm::vec3(0.0f, 0.0f, 0.1f)); // moving it a bit so that it is rendered infront of the quad
 
-		GraphSpecification graphSpec;
-		graphSpec.lineWidth = 15.f;
-		graphSpec.color = Color::emeraldGreen;
-		auto& gc = graph.AddComponent<GraphComponent>(graphSpec);
+		auto& gc = graph.AddComponent<GraphComponent>(10.0f);
 
 		gc.graph.CalculateCoordinates(
 			[](float x) -> float
@@ -58,8 +59,11 @@ namespace Vanim
 			},
 			GraphData
 			{
-				-8.0f,
-				8.0f,
+				Rect 
+				{
+					-8.0f, 8.0f,
+					-4.5f, 4.5f
+				},
 				0.05f,
 				{ }
 			}
@@ -68,10 +72,6 @@ namespace Vanim
 		graph.AddComponent<AnimationComponent>(_defaultShader, gc.graph.GetVAO(), gc.graph.NumIndices());
 
 		_sceneHierarchyPanel.SetContext(&_scene);
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		_sceneFrameBuffer = MakeUnique<FrameBuffer>();
 
@@ -125,6 +125,8 @@ namespace Vanim
 			auto& ac = entity.GetComponent<AnimationComponent>();
 			auto& tc = entity.GetComponent<TransformComponent>();
 
+			ac.color = Color::HSLtoRGB(glm::vec3(fmod(Application::GetTime() * 0.2f, 1.0f), 1.0f, 0.5f));
+
 			ac.shader->SetViewProjection(viewProjection);
 			ac.shader->SetModelMatrix(tc.AsMat4());
 			ac.shader->SetColor(ac.color);
@@ -144,20 +146,11 @@ namespace Vanim
 
 		ImGui::Begin("Scene", nullptr, sceneFlags);
 
-		ImVec2 size = ImGui::GetContentRegionAvail();
-
-		if (size.x / (16.f / 9.f) < size.y)
-		{
-			size.y = size.x / (16.f / 9.f);
-		}
-		else
-		{
-			size.x = size.y * (16.f / 9.f);
-		}
+		ImVec2 size = ImVec2(_sceneTexture->GetWidth(), _sceneTexture->GetHeight());
 
 		ImTextureID textureID = reinterpret_cast<ImTextureID>((GLuint)*_sceneTexture);
 		ImGui::Image(textureID, size, ImVec2(0, 1), ImVec2(1, 0));
-
+		
 		ImGui::End();
 
 		ImGui::Begin("Animator");

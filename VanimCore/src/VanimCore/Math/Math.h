@@ -14,15 +14,23 @@ namespace Vanim
 	{
 	public:
 		template<typename T>
-		static Arithmetic Sign(T a)
+		static Arithmetic Clamp(T a, T b, T value)
 		{
-			return a < (T)0 ? (T)-1 : (T)1;
+			return value < a ? a :
+				   value > b ? b :
+				   value;
 		}
 
 		template<typename T>
-		static Arithmetic Abs(T a)
+		static Arithmetic Sign(T value)
 		{
-			return a < (T)0 ? -a : a;
+			return value < (T)0 ? (T)-1 : (T)1;
+		}
+
+		template<typename T>
+		static Arithmetic Abs(T value)
+		{
+			return value < (T)0 ? -value : value;
 		}
 
 		template<typename T>

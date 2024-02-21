@@ -4,22 +4,16 @@
 #include "VanimCore/Util/Color.h"
 #include "VanimCore/OpenGL/VertexArray.h"
 #include "VanimCore/OpenGL/Shader.h"
+#include "VanimCore/Math/Rect.h"
 
 #include <glm/glm.hpp>
 #include <vector>
 
 namespace Vanim
 {
-	struct GraphSpecification
-	{
-		float		lineWidth = 5.f;
-		glm::vec4	color = Color::salmon;
-	};
-
 	struct GraphData
 	{
-		float				minX = -5.0f;
-		float				maxX = 5.0f; 
+		Rect				bounds;
 		float				increment = 0.01f;
 		std::vector<float>	excludes = {};
 	};
@@ -27,7 +21,7 @@ namespace Vanim
 	class Graph
 	{
 	public:
-		Graph(const GraphSpecification& spec = {});
+		Graph(float lineWidth = 5.f);
 
 		void CalculateCoordinates(
 			float (*Function)(float), 

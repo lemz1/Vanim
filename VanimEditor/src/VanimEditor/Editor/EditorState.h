@@ -32,6 +32,10 @@ namespace Vanim
 		Unique<Texture> _sceneTexture;
 		Unique<RenderBuffer> _sceneDepthBuffer;
 
+		#ifdef VANIM_DEBUG
+		bool _showDebugInfo = true;
+		#else
 		bool _showDebugInfo = false;
+		#endif
 	};
 }
