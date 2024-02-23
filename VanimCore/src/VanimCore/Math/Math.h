@@ -34,6 +34,18 @@ namespace Vanim
 		}
 
 		template<typename T>
+		static Arithmetic Ceil(T value)
+		{
+			return (T)ceil(value);
+		}
+
+		template<typename T>
+		static Arithmetic Floor(T value)
+		{
+			return (T)floor(value);
+		}
+
+		template<typename T>
 		static Arithmetic Max(T a, T b)
 		{
 			return a > b ? a : b;

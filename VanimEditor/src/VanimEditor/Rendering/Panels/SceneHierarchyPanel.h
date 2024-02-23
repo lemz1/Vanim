@@ -10,8 +10,6 @@ namespace Vanim
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(Scene* context);
 
-		void SetContext(Scene* context);
-		
 		void DrawImGui();
 	private:
 		void DrawEntityNode(Entity& entity);

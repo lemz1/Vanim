@@ -1,7 +1,7 @@
 #include "editorpch.h"
 #include "EditorState.h"
 
-#include "VanimEditor/Rendering/ImGuiStyle.h"
+#include "VanimEditor/Rendering/MyGui.h"
 
 #include "VanimEditor/Script/CameraController.h"
 
@@ -15,7 +15,9 @@ namespace Vanim
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		ImGuiStyle::SetImGuiStyle();
+		MyGui::SetImGuiStyle();
+
+		_animationManager = MakeShared<AnimationManager>();
 
 		ShaderInfo infos[] = {
 			ShaderInfo
@@ -71,7 +73,8 @@ namespace Vanim
 
 		graph.AddComponent<AnimationComponent>(_defaultShader, gc.graph.GetVAO(), gc.graph.NumIndices());
 
-		_sceneHierarchyPanel.SetContext(&_scene);
+		_sceneHierarchyPanel = MakeUnique<SceneHierarchyPanel>(&_scene);
+		_animatorPanel = MakeUnique<AnimatorPanel>(&_scene, _animationManager.get());
 
 		_sceneFrameBuffer = MakeUnique<FrameBuffer>();
 
@@ -141,29 +144,36 @@ namespace Vanim
 	{
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-		ImGuiWindowFlags sceneFlags = ImGuiWindowFlags_NoCollapse;
-		// sceneFlags |= ImGuiWindowFlags_NoMove;
-
-		ImGui::Begin("Scene", nullptr, sceneFlags);
-
-		ImVec2 size = ImVec2(_sceneTexture->GetWidth(), _sceneTexture->GetHeight());
-
-		ImTextureID textureID = reinterpret_cast<ImTextureID>((GLuint)*_sceneTexture);
-		ImGui::Image(textureID, size, ImVec2(0, 1), ImVec2(1, 0));
-		
-		ImGui::End();
-
-		ImGui::Begin("Animator");
-		ImGui::Text("Animation");
-		ImGui::End();
-
-		_sceneHierarchyPanel.DrawImGui();
-
-		if (_showDebugInfo)
 		{
-			ImGui::Begin("DebugInfo");
-			ImGui::Text("%d FPS", (int32_t)ImGui::GetIO().Framerate);
-			ImGui::Text("Entities: %d", _scene.GetEntitiesOfTypes<entt::entity>().size());
+			ImGui::Begin("Scene", nullptr, MyGui::defaultWindowFlags);
+
+			ImVec2 size = ImVec2(_sceneTexture->GetWidth(), _sceneTexture->GetHeight());
+
+			ImTextureID textureID = reinterpret_cast<ImTextureID>((GLuint)*_sceneTexture);
+			ImGui::Image(textureID, size, ImVec2(0, 1), ImVec2(1, 0));
+
+			ImGui::End();
+		}
+
+		{
+			_sceneHierarchyPanel->DrawImGui();
+		}
+
+		{
+			_animatorPanel->DrawImGui();
+		}
+
+		{
+			ImGui::Begin("Info", nullptr, MyGui::defaultWindowFlags);
+			ImGui::Text("F3 - Show Debug Info");
+
+			if (_showDebugInfo)
+			{
+				ImGui::NewLine();
+				ImGui::Text("%d FPS", (uint32_t)ImGui::GetIO().Framerate);
+				ImGui::Text("Entities: %d", _scene.GetEntitiesOfTypes<entt::entity>().size());
+			}
+
 			ImGui::End();
 		}
 	}

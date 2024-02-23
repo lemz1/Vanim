@@ -3,22 +3,18 @@
 
 #include <imgui.h>
 
+#include "VanimEditor/Rendering/MyGui.h"
+
 namespace Vanim
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(Scene* context)
-	{
-		SetContext(context);
-	}
-
-	void SceneHierarchyPanel::SetContext(Scene* context)
-	{
-		_context = context;
-	}
+	:	_context(context)
+	{}
 
 	void SceneHierarchyPanel::DrawImGui()
 	{
-		ImGui::Begin("Scene Hierarchy");
-
+		ImGui::Begin("Scene Hierarchy", nullptr, MyGui::defaultWindowFlags);
+		
 		// i would have done _context->GetEntitiesOfType, however entt::entity makes 
 		// it not work since it needs to then use size_hint which the template doesnt have
 		// so im using GetEntitiesOfTypes instead

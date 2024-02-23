@@ -3,8 +3,10 @@
 #include "VanimCore.h"
 
 #include "VanimEditor/Rendering/Panels/SceneHierarchyPanel.h"
+#include "VanimEditor/Rendering/Panels/AnimatorPanel.h"
 
 #include "VanimEditor/Animation/CreateAnimation.h"
+#include "VanimEditor/Animation/AnimationManager.h"
 
 namespace Vanim
 {
@@ -24,18 +26,16 @@ namespace Vanim
 		Shared<Shader> _defaultShader;
 		Unique<CreateAnimation> _createAnimation;
 
+		Shared<AnimationManager> _animationManager;
 
 		Scene _scene;
-		SceneHierarchyPanel _sceneHierarchyPanel;
+		Unique<SceneHierarchyPanel> _sceneHierarchyPanel;
+		Unique<AnimatorPanel> _animatorPanel;
 
 		Unique<FrameBuffer> _sceneFrameBuffer;
 		Unique<Texture> _sceneTexture;
 		Unique<RenderBuffer> _sceneDepthBuffer;
 
-		#ifdef VANIM_DEBUG
-		bool _showDebugInfo = true;
-		#else
 		bool _showDebugInfo = false;
-		#endif
 	};
 }
