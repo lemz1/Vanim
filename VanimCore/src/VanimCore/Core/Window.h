@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "VanimCore/Base.h"
+
 namespace Vanim
 {
 	struct WindowSpecification

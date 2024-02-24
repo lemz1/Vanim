@@ -5,8 +5,6 @@
 
 #include "VanimEditor/Script/CameraController.h"
 
-#include "VanimEditor/Animation/IAnimation.h"
-
 namespace Vanim
 {
 	void EditorState::Create()
@@ -22,12 +20,12 @@ namespace Vanim
 		ShaderInfo infos[] = {
 			ShaderInfo
 			{
-				"Assets/Shaders/Default.vert.glsl",
+				"Assets/Shaders/Default.vert",
 				ShaderType::VertexShader
 			},
 			ShaderInfo
 			{
-				"Assets/Shaders/Default.frag.glsl",
+				"Assets/Shaders/Default.frag",
 				ShaderType::FragmentShader
 			},
 		};
@@ -71,7 +69,15 @@ namespace Vanim
 			}
 		);
 
-		graph.AddComponent<AnimationComponent>(_defaultShader, gc.graph.GetVAO(), gc.graph.NumIndices());
+		_defaultShader->Bind();
+
+		GLint vID = _defaultShader->GetUniformLocation("u_ViewProjection");
+		GLint mID = _defaultShader->GetUniformLocation("u_ModelMatrix");
+		GLint cID = _defaultShader->GetUniformLocation("u_Color");
+
+		_defaultShader->Unbind();
+
+		graph.AddComponent<RenderingComponent>(_defaultShader, vID, mID, cID, gc.graph.GetVAO(), gc.graph.NumIndices());
 
 		_sceneHierarchyPanel = MakeUnique<SceneHierarchyPanel>(&_scene);
 		_animatorPanel = MakeUnique<AnimatorPanel>(&_scene, _animationManager.get());
@@ -85,9 +91,9 @@ namespace Vanim
 		_sceneFrameBuffer->LinkRenderBuffer(GL_DEPTH_ATTACHMENT, *_sceneDepthBuffer);
 
 		Application::GetWindow()->SetVSync(false);
-
-		std::vector<Entity> createEntities = { graph };
-		_createAnimation = MakeUnique<CreateAnimation>(createEntities);
+		
+		std::vector<Entity> e = { graph };
+		_createAnimation = MakeUnique<Animation>("Assets/Data/Animations/Create.frag", e);
 	}
 
 	void EditorState::Update(const float deltaTime)
@@ -100,7 +106,7 @@ namespace Vanim
 		}
 
 		float progress = Math::Min(Application::GetTime() / 3.0f, 1.0f);
-
+		
 		_createAnimation->Play(Ease::OutBounce(Ease::InCubic(progress)));
 	}
 
@@ -123,18 +129,22 @@ namespace Vanim
 			break;
 		}
 
-		for (auto& entity : _scene.GetEntitiesOfType<AnimationComponent>())
+		for (auto& entity : _scene.GetEntitiesOfType<RenderingComponent>())
 		{
-			auto& ac = entity.GetComponent<AnimationComponent>();
+			auto& rc = entity.GetComponent<RenderingComponent>();
 			auto& tc = entity.GetComponent<TransformComponent>();
 
-			ac.color = Color::HSLtoRGB(glm::vec3(fmod(Application::GetTime() * 0.2f, 1.0f), 1.0f, 0.5f));
+			glm::vec4 color = Color::HSLtoRGB(glm::vec3(fmod(Application::GetTime() * 0.2f, 1.0f), 1.0f, 0.5f));
 
-			ac.shader->SetViewProjection(viewProjection);
-			ac.shader->SetModelMatrix(tc.AsMat4());
-			ac.shader->SetColor(ac.color);
+			rc.shader->Bind();
 
-			Renderer::DrawMesh(ac.shader->GetShader(), ac.GetVAO(), ac.NumIndices());
+			rc.shader->Set4x4Matrix(rc.viewProjectionID, 1, false, (GLfloat*)&viewProjection);
+			rc.shader->Set4x4Matrix(rc.modelMatrixID, 1, false, (GLfloat*)&tc.AsMat4());
+			rc.shader->SetFloats(rc.colorID, color.r, color.g, color.b, color.a);
+
+			rc.shader->Unbind();
+
+			Renderer::DrawMesh(rc.shader, rc.GetVAO(), rc.NumIndices());
 		}
 
 		_sceneFrameBuffer->Unbind();

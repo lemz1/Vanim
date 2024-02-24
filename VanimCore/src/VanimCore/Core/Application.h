@@ -4,6 +4,9 @@
 
 #include "Window.h"
 #include "State.h"
+#include "VanimCore/Lua/Lua.h"
+
+#include "VanimCore/Base.h"
 
 namespace Vanim
 {

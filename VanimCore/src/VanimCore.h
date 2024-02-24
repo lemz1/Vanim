@@ -25,12 +25,13 @@
 #include "VanimCore/ECS/Entity.h"
 #include "VanimCore/ECS/Scene.h"
 
-#include "VanimCore/Rendering/AnimationShader.h"
 #include "VanimCore/Rendering/Renderer.h"
 #include "VanimCore/Rendering/Camera.h"
 #include "VanimCore/Rendering/Graph.h"
 #include "VanimCore/Rendering/Mesh.h"
 
 #include "VanimCore/Math/Math.h"
+
+#include "VanimCore/Lua/Lua.h"
 
 #include "VanimCore/Base.h"

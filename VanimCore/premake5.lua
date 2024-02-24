@@ -15,7 +15,8 @@ project "VanimCore"
         "%{wks.location}/vendor/glad/glad/include",
         "%{wks.location}/vendor/imgui/imgui",
         "%{wks.location}/vendor/glm/glm",
-        "%{wks.location}/vendor/entt/entt/src"
+        "%{wks.location}/vendor/entt/entt/src",
+        "%{wks.location}/vendor/lua"
     }
 
     links 
@@ -23,5 +24,6 @@ project "VanimCore"
         "GLFW",
         "Glad",
         "ImGui",
-        "opengl32.lib"
+        "opengl32",
+        "%{wks.location}/vendor/lua/lua542/lua54"
     }

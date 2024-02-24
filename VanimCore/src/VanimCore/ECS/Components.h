@@ -8,7 +8,6 @@
 
 #include "ScriptableEntity.h"
 
-#include "VanimCore/Rendering/AnimationShader.h"
 #include "VanimCore/Rendering/Camera.h"
 #include "VanimCore/Rendering/Graph.h"
 #include "VanimCore/Rendering/Mesh.h"
@@ -83,27 +82,23 @@ namespace Vanim
 		ScriptableEntity* instance;
 	};
 
-	struct AnimationComponent
+	struct RenderingComponent
 	{
 	public:
-		AnimationComponent() = delete;
-		AnimationComponent(const AnimationComponent&) = default;
-		AnimationComponent(
+		RenderingComponent() = delete;
+		RenderingComponent(const RenderingComponent&) = default;
+		RenderingComponent(
 			const Shared<Shader>& shader,
-			const Shared<VertexArray>& vao,
-			GLsizei numIndices
-		)
-		:	shader(MakeShared<AnimationShader>(shader)),
-			_vao(vao),
-			_numIndices(numIndices)
-		{}
-
-		AnimationComponent(
-			const Shared<AnimationShader>& shader,
+			GLint viewProjectionID,
+			GLint modelMatrixID,
+			GLint colorID,
 			const Shared<VertexArray>& vao,
 			GLsizei numIndices
 		)
 		:	shader(shader),
+			viewProjectionID(viewProjectionID),
+			modelMatrixID(modelMatrixID),
+			colorID(colorID),
 			_vao(vao),
 			_numIndices(numIndices)
 		{}
@@ -111,12 +106,15 @@ namespace Vanim
 		const Shared<VertexArray>& GetVAO() const { return _vao; }
 		GLsizei NumIndices() const { return _numIndices; }
 	public:
-		Shared<AnimationShader> shader;
+		Shared<Shader> shader;
 
-		glm::vec4 color = Color::red6;
+		GLint viewProjectionID;
+		GLint modelMatrixID;
+		GLint colorID;
 	private:
 		Shared<VertexArray> _vao;
 		GLsizei _numIndices;
+
 	};
 
 	struct LayerComponent

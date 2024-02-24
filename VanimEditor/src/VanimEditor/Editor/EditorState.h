@@ -5,8 +5,8 @@
 #include "VanimEditor/Rendering/Panels/SceneHierarchyPanel.h"
 #include "VanimEditor/Rendering/Panels/AnimatorPanel.h"
 
-#include "VanimEditor/Animation/CreateAnimation.h"
 #include "VanimEditor/Animation/AnimationManager.h"
+#include "VanimEditor/Animation/Animation.h"
 
 namespace Vanim
 {
@@ -24,7 +24,7 @@ namespace Vanim
 		void Destroy() override;
 	private:
 		Shared<Shader> _defaultShader;
-		Unique<CreateAnimation> _createAnimation;
+		Unique<Animation> _createAnimation;
 
 		Shared<AnimationManager> _animationManager;
 

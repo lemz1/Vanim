@@ -26,6 +26,8 @@ namespace Vanim
 		// 20 pixels per seconds
 		float sliderWidth = 20 * _animationManager->totalTimeSeconds;
 
+		ImGui::BeginGroup();
+
 		ImVec2 sliderPos = ImGui::GetCursorPos();
 		ImGui::PushItemWidth(sliderWidth);
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)); // make text invisible
@@ -51,13 +53,14 @@ namespace Vanim
 		ImGui::SetCursorPosY(sliderPos.y + style.FramePadding.y);
 		ImGui::Text(valueText.c_str());
 
+		ImGui::EndGroup();
+
 		for (size_t i = 0; i < _animationManager->animations; i++)
 		{
 			ImGui::Text("Animation");
 		}
 
 		ImGui::SetCursorPosX(plusSymbolPos.x + ImGui::GetScrollX());
-		ImGui::SetCursorPosY(plusSymbolPos.y);
 		if (ImGui::Button("+", ImVec2(25, 25)))
 		{
 			_animationManager->animations++;
