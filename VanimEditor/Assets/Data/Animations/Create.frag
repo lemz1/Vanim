@@ -7,7 +7,6 @@ in vec2 o_TexCoord;
 
 out vec4 fragColor;
 
-// i'll probably change this later
 void main()
 {
 	float alpha = 1.0 - step(u_Progress, o_TexCoord.x);

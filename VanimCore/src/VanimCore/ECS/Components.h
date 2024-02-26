@@ -8,6 +8,7 @@
 
 #include "ScriptableEntity.h"
 
+#include "VanimCore/Rendering/RenderShader.h"
 #include "VanimCore/Rendering/Camera.h"
 #include "VanimCore/Rendering/Graph.h"
 #include "VanimCore/Rendering/Mesh.h"
@@ -88,17 +89,11 @@ namespace Vanim
 		RenderingComponent() = delete;
 		RenderingComponent(const RenderingComponent&) = default;
 		RenderingComponent(
-			const Shared<Shader>& shader,
-			GLint viewProjectionID,
-			GLint modelMatrixID,
-			GLint colorID,
+			const Shared<RenderShader>& shader,
 			const Shared<VertexArray>& vao,
 			GLsizei numIndices
 		)
 		:	shader(shader),
-			viewProjectionID(viewProjectionID),
-			modelMatrixID(modelMatrixID),
-			colorID(colorID),
 			_vao(vao),
 			_numIndices(numIndices)
 		{}
@@ -106,15 +101,10 @@ namespace Vanim
 		const Shared<VertexArray>& GetVAO() const { return _vao; }
 		GLsizei NumIndices() const { return _numIndices; }
 	public:
-		Shared<Shader> shader;
-
-		GLint viewProjectionID;
-		GLint modelMatrixID;
-		GLint colorID;
+		Shared<RenderShader> shader;
 	private:
 		Shared<VertexArray> _vao;
 		GLsizei _numIndices;
-
 	};
 
 	struct LayerComponent

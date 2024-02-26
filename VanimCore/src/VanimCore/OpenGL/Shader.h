@@ -1,5 +1,7 @@
 #pragma once
 
+#include "VanimCore/Base.h"
+
 #include <stdint.h>
 #include <glad/glad.h>
 

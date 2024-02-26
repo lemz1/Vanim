@@ -15,10 +15,7 @@ namespace Vanim
 		// progress goes from 0 to 1
 		void Play(float progress);
 	private:
-		Shared<Shader>	_shader;
-		GLint _viewProjectionID = -1;
-		GLint _modelMatrixID = -1;
+		Shared<RenderShader> _shader;
 		GLint _progressID = -1;
-		GLint _colorID = -1;
 	};
 }

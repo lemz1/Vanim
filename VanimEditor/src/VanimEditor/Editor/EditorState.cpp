@@ -17,21 +17,6 @@ namespace Vanim
 
 		_animationManager = MakeShared<AnimationManager>();
 
-		ShaderInfo infos[] = {
-			ShaderInfo
-			{
-				"Assets/Shaders/Default.vert",
-				ShaderType::VertexShader
-			},
-			ShaderInfo
-			{
-				"Assets/Shaders/Default.frag",
-				ShaderType::FragmentShader
-			},
-		};
-
-		_defaultShader = MakeShared<Shader>(2, infos);
-
 		auto camera = _scene.CreateEntity("Camera");
 		camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.f));
 
@@ -69,15 +54,9 @@ namespace Vanim
 			}
 		);
 
-		_defaultShader->Bind();
+		_defaultShader = MakeShared<RenderShader>("Assets/Shaders/Default.vert", "Assets/Shaders/Default.frag");
 
-		GLint vID = _defaultShader->GetUniformLocation("u_ViewProjection");
-		GLint mID = _defaultShader->GetUniformLocation("u_ModelMatrix");
-		GLint cID = _defaultShader->GetUniformLocation("u_Color");
-
-		_defaultShader->Unbind();
-
-		graph.AddComponent<RenderingComponent>(_defaultShader, vID, mID, cID, gc.graph.GetVAO(), gc.graph.NumIndices());
+		graph.AddComponent<RenderingComponent>(_defaultShader, gc.graph.GetVAO(), gc.graph.NumIndices());
 
 		_sceneHierarchyPanel = MakeUnique<SceneHierarchyPanel>(&_scene);
 		_animatorPanel = MakeUnique<AnimatorPanel>(&_scene, _animationManager.get());
@@ -136,15 +115,15 @@ namespace Vanim
 
 			glm::vec4 color = Color::HSLtoRGB(glm::vec3(fmod(Application::GetTime() * 0.2f, 1.0f), 1.0f, 0.5f));
 
-			rc.shader->Bind();
+			rc.shader->GetShader()->Bind();
 
-			rc.shader->Set4x4Matrix(rc.viewProjectionID, 1, false, (GLfloat*)&viewProjection);
-			rc.shader->Set4x4Matrix(rc.modelMatrixID, 1, false, (GLfloat*)&tc.AsMat4());
-			rc.shader->SetFloats(rc.colorID, color.r, color.g, color.b, color.a);
+			rc.shader->GetShader()->Set4x4Matrix(rc.shader->GetViewProjectionID(), 1, false, (GLfloat*)&viewProjection);
+			rc.shader->GetShader()->Set4x4Matrix(rc.shader->GetModelMatrixID(), 1, false, (GLfloat*)&tc.AsMat4());
+			rc.shader->GetShader()->SetFloats(rc.shader->GetColorID(), color.r, color.g, color.b, color.a);
 
-			rc.shader->Unbind();
+			rc.shader->GetShader()->Unbind();
 
-			Renderer::DrawMesh(rc.shader, rc.GetVAO(), rc.NumIndices());
+			Renderer::DrawMesh(rc.shader->GetShader(), rc.GetVAO(), rc.NumIndices());
 		}
 
 		_sceneFrameBuffer->Unbind();

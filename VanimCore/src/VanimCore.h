@@ -25,6 +25,7 @@
 #include "VanimCore/ECS/Entity.h"
 #include "VanimCore/ECS/Scene.h"
 
+#include "VanimCore/Rendering/RenderShader.h"
 #include "VanimCore/Rendering/Renderer.h"
 #include "VanimCore/Rendering/Camera.h"
 #include "VanimCore/Rendering/Graph.h"

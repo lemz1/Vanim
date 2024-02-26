@@ -23,7 +23,7 @@ namespace Vanim
 
 		void Destroy() override;
 	private:
-		Shared<Shader> _defaultShader;
+		Shared<RenderShader> _defaultShader;
 		Unique<Animation> _createAnimation;
 
 		Shared<AnimationManager> _animationManager;
